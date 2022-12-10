@@ -25,10 +25,8 @@
     </style>
     <script>
       const LEFT_MOUSE = 1;
-      const HOVER = 0;
-      let isMouseDown = false;
       let dragSelectElement = null;
-      let controller = null;
+      let abortController = null;
       let anchorPoint = {};
       function getScrollInfo() {
         return {
@@ -58,18 +56,17 @@
         return imageElement;
       }
       function mouseDown() {
-        const { type, which: buttonName, offsetY, offsetX } = event;
+        const { which: buttonName, offsetY, offsetX } = event;
         if (buttonName == LEFT_MOUSE) {
-          const pos = getElementPosition(getContainerElement());
           // Subscribe to `mouseMove` event on `document` here.
-          controller = new AbortController();
+          abortController = new AbortController();
           document.addEventListener("mousemove", mouseMove, {
-            signal: controller.signal,
+            signal: abortController.signal,
           });
           document.addEventListener("mouseup", mouseUpAnywhere, {
-            signal: controller.signal,
+            signal: abortController.signal,
           });
-          const imageElement = getContainerElement();
+          const containerElement = getContainerElement();
           dragSelectElement = document.createElement("div");
           dragSelectElement.style.position = "absolute";
           dragSelectElement.style.top = `${offsetY}px`;
@@ -77,33 +74,26 @@
           dragSelectElement.style.border = "5px solid black";
           dragSelectElement.style.boxSizing = "border-box";
           anchorPoint = { x: offsetX, y: offsetY };
-          imageElement.appendChild(dragSelectElement);
+          containerElement.appendChild(dragSelectElement);
         }
       }
       function mouseUpAnywhere() {
-        // Unsubscribe to `mouseMove` event on `document` here.
-        controller.abort();
-        controller = null;
-        dragSelectElement = null;
-        anchorPoint = {};
-        const { type, which: buttonName } = event;
-        if (type == "mouseup") {
-          if (buttonName == LEFT_MOUSE) {
-            // Left click
-            console.log("Left click up");
-            isMouseDown = false;
-          }
+        const { which: buttonName } = event;
+        if (buttonName == LEFT_MOUSE) {
+          // Unsubscribe to `mouseMove` event on `document` here.
+          abortController.abort();
+          abortController = null;
+          dragSelectElement = null;
+          anchorPoint = {};
         }
       }
       function mouseMove() {
         if (dragSelectElement) {
           const { pageX, pageY } = event; // Position of the mouse pointer in the page (scroll lengths included).
-          const containerElementPosition = getElementPosition(
-            getContainerElement()
-          );
-          const containerElementDimension = getElementDimension(
-            getContainerElement()
-          );
+          const containerElement = getContainerElement();
+          const containerElementPosition = getElementPosition(containerElement);
+          const containerElementDimension =
+            getElementDimension(containerElement);
           const left = pageX - containerElementPosition.x;
           const top = pageY - containerElementPosition.y;
           const { x: anchorX, y: anchorY } = anchorPoint;
