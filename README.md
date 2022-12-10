@@ -1,4 +1,8 @@
-# Drag select marker
+# Drag select marker (WIP)
+
+### Mark areas on HTML elements
+
+![](https://github.com/shibisuriya/drag-select-marker/blob/master/demo/demo.gif)
 
 ## Borders and outlines
 
