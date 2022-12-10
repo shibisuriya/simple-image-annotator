@@ -14,8 +14,8 @@
         position: relative;
       }
       .image {
-        width: 300px;
-        height: 300px;
+        width: 500px;
+        height: 500px;
         background-color: red;
         color: black;
         position: absolute;
@@ -46,15 +46,21 @@
           height: height,
         };
       }
-      function getImageElement() {
-        const [imageElement] = document.getElementsByClassName("image");
+      function getElementDimension(el) {
+        const { width, height } = el.getBoundingClientRect();
+        return {
+          width: width,
+          height: height,
+        };
+      }
+      function getContainerElement(containerClass = "image") {
+        const [imageElement] = document.getElementsByClassName(containerClass);
         return imageElement;
       }
       function mouseDown() {
         const { type, which: buttonName, offsetY, offsetX } = event;
         if (buttonName == LEFT_MOUSE) {
-          console.log("Left click down");
-          const pos = getElementPosition(getImageElement());
+          const pos = getElementPosition(getContainerElement());
           // Subscribe to `mouseMove` event on `document` here.
           controller = new AbortController();
           document.addEventListener("mousemove", mouseMove, {
@@ -63,12 +69,12 @@
           document.addEventListener("mouseup", mouseUpAnywhere, {
             signal: controller.signal,
           });
-          const imageElement = getImageElement();
+          const imageElement = getContainerElement();
           dragSelectElement = document.createElement("div");
           dragSelectElement.style.position = "absolute";
           dragSelectElement.style.top = `${offsetY}px`;
           dragSelectElement.style.left = `${offsetX}px`;
-          dragSelectElement.style.border = "10px solid black";
+          dragSelectElement.style.border = "5px solid black";
           dragSelectElement.style.boxSizing = "border-box";
           anchorPoint = { x: offsetX, y: offsetY };
           imageElement.appendChild(dragSelectElement);
@@ -92,13 +98,17 @@
       function mouseMove() {
         if (dragSelectElement) {
           const { pageX, pageY } = event; // Position of the mouse pointer in the page (scroll lengths included).
-          const imageElementPosition = getElementPosition(getImageElement());
-          const left = pageX - imageElementPosition.x;
-          const top = pageY - imageElementPosition.y;
+          const containerElementPosition = getElementPosition(
+            getContainerElement()
+          );
+          const containerElementDimension = getElementDimension(
+            getContainerElement()
+          );
+          const left = pageX - containerElementPosition.x;
+          const top = pageY - containerElementPosition.y;
           const { x: anchorX, y: anchorY } = anchorPoint;
-          const dragSelectElementPosition =
-            getElementPosition(dragSelectElement);
-          if (left <= imageElementPosition.width && left >= 0) {
+          if (left <= containerElementDimension.width && left >= 0) {
+            // Mouse pointer is inside the container element.
             if (left - anchorX >= 0) {
               dragSelectElement.style.left = `${anchorX}px`;
               dragSelectElement.style.width = `${left - anchorX}px`;
@@ -106,8 +116,18 @@
               dragSelectElement.style.left = `${left}px`;
               dragSelectElement.style.width = `${anchorX - left}px`;
             }
+          } else if (left > containerElementDimension.width) {
+            // Mouse pointer is to the right of the container element.
+            dragSelectElement.style.width = `${
+              containerElementDimension.width - anchorX
+            }px`;
+          } else if (left < 0) {
+            // Mouse pointer is to the left of the container element.
+            dragSelectElement.style.left = "0px";
+            dragSelectElement.style.width = `${anchorX}px`;
           }
-          if (top <= imageElementPosition.height && top >= 0) {
+          if (top <= containerElementDimension.height && top >= 0) {
+            // Mouse pointer is inside the container element.
             if (top - anchorY >= 0) {
               dragSelectElement.style.top = `${anchorY}px`;
               dragSelectElement.style.height = `${top - anchorY}px`;
@@ -115,6 +135,15 @@
               dragSelectElement.style.top = `${top}px`;
               dragSelectElement.style.height = `${anchorY - top}px`;
             }
+          } else if (top > containerElementDimension.height) {
+            // Mouse pointer is below the container element.
+            dragSelectElement.style.height = `${
+              containerElementDimension.height - anchorY
+            }px`;
+          } else if (top < 0) {
+            // Mouse pointer is above the container element.
+            dragSelectElement.style.top = "0px";
+            dragSelectElement.style.height = `${anchorY}px`;
           }
         }
       }
