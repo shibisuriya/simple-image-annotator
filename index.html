@@ -56,7 +56,12 @@
         return imageElement;
       }
       function mouseDown() {
-        const { which: buttonName, offsetY, offsetX } = event;
+        const { which: buttonName, pageX, pageY } = event;
+        const containerElementPosition = getElementPosition(
+          getContainerElement()
+        );
+        const left = pageX - containerElementPosition.x;
+        const top = pageY - containerElementPosition.y;
         if (buttonName == LEFT_MOUSE) {
           // Subscribe to `mouseMove` event on `document` here.
           abortController = new AbortController();
@@ -69,11 +74,11 @@
           const containerElement = getContainerElement();
           dragSelectElement = document.createElement("div");
           dragSelectElement.style.position = "absolute";
-          dragSelectElement.style.top = `${offsetY}px`;
-          dragSelectElement.style.left = `${offsetX}px`;
+          dragSelectElement.style.top = `${top}px`;
+          dragSelectElement.style.left = `${left}px`;
           dragSelectElement.style.border = "5px solid black";
           dragSelectElement.style.boxSizing = "border-box";
-          anchorPoint = { x: offsetX, y: offsetY };
+          anchorPoint = { x: left, y: top };
           containerElement.appendChild(dragSelectElement);
         }
       }
