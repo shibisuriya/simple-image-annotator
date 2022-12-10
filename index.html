@@ -6,111 +6,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-      * {
+      /* * {
         outline: 1px dotted black !important;
-      }
+      } */
       body {
         margin: 0px;
+        position: relative;
       }
       .image {
         width: 300px;
         height: 300px;
         background-color: red;
         color: black;
-        position: relative;
+        position: absolute;
+        left: 100px;
+        top: 100px;
       }
     </style>
     <script>
-      const LEFT_CLICK = 1;
+      const LEFT_MOUSE = 1;
       const HOVER = 0;
       let isMouseDown = false;
       let dragSelectElement = null;
+      let controller = null;
       let anchorPoint = {};
+      function getScrollInfo() {
+        return {
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+        };
+      }
+      function getElementPosition(el) {
+        const { scrollX, scrollY } = getScrollInfo();
+        const { left, top, width, height } = el.getBoundingClientRect();
+        return {
+          x: left + scrollX,
+          y: top + scrollY,
+          width: width,
+          height: height,
+        };
+      }
       function getImageElement() {
         const [imageElement] = document.getElementsByClassName("image");
         return imageElement;
       }
       function mouseDown() {
-        const { type, which: buttonName, clientX, clientY } = event;
-        const imageElement = getImageElement();
-        dragSelectElement = document.createElement("div");
-        dragSelectElement.id = "";
-        dragSelectElement.style.position = "absolute";
-        dragSelectElement.style.top = `${clientY}px`;
-        dragSelectElement.style.left = `${clientX}px`;
-        dragSelectElement.style.border = "2px solid blue";
-        anchorPoint = { x: clientX, y: clientY };
-
-        imageElement.appendChild(dragSelectElement);
-        if (type == "mousedown") {
-          if (buttonName == LEFT_CLICK) {
-            console.log("Left click down");
-            isMouseDown = true;
-          }
+        const { type, which: buttonName, offsetY, offsetX } = event;
+        if (buttonName == LEFT_MOUSE) {
+          console.log("Left click down");
+          const pos = getElementPosition(getImageElement());
+          // Subscribe to `mouseMove` event on `document` here.
+          controller = new AbortController();
+          document.addEventListener("mousemove", mouseMove, {
+            signal: controller.signal,
+          });
+          document.addEventListener("mouseup", mouseUpAnywhere, {
+            signal: controller.signal,
+          });
+          const imageElement = getImageElement();
+          dragSelectElement = document.createElement("div");
+          dragSelectElement.style.position = "absolute";
+          dragSelectElement.style.top = `${offsetY}px`;
+          dragSelectElement.style.left = `${offsetX}px`;
+          dragSelectElement.style.outline = "10px solid blue";
+          dragSelectElement.style.border = "10px solid black";
+          anchorPoint = { x: offsetX, y: offsetY };
+          imageElement.appendChild(dragSelectElement);
         }
       }
-      function mouseUp() {
+      function mouseUpAnywhere() {
+        // Unsubscribe to `mouseMove` event on `document` here.
+        controller.abort();
+        controller = null;
         dragSelectElement = null;
         anchorPoint = {};
         const { type, which: buttonName } = event;
         if (type == "mouseup") {
-          if (buttonName == LEFT_CLICK) {
+          if (buttonName == LEFT_MOUSE) {
             // Left click
             console.log("Left click up");
             isMouseDown = false;
           }
-          
         }
       }
       function mouseMove() {
         if (dragSelectElement) {
-          const { x, y } = anchorPoint;
-          const { which, clientX, clientY } = event;
-          if (clientX - x >= 0) {
-            dragSelectElement.style.left = `${x}px`;
-            dragSelectElement.style.width = `${clientX - x}px`;
-          } else {
-            dragSelectElement.style.left = `${clientX}px`;
-            dragSelectElement.style.width = `${x - clientX}px`;
+          const { pageX, pageY } = event; // Position of the mouse pointer in the page (scroll lengths included).
+          const imageElementPosition = getElementPosition(getImageElement());
+          const left = pageX - imageElementPosition.x;
+          const top = pageY - imageElementPosition.y;
+          const { x: anchorX, y: anchorY } = anchorPoint;
+          console.log("outline", dragSelectElement.style.outline);
+          console.log("border", dragSelectElement.style.border);
+          if (left < imageElementPosition.width && left >= 0) {
+            if (left - anchorX >= 0) {
+              dragSelectElement.style.left = `${anchorX}px`;
+              dragSelectElement.style.width = `${left - anchorX}px`;
+            } else {
+              dragSelectElement.style.left = `${left}px`;
+              dragSelectElement.style.width = `${anchorX - left}px`;
+            }
           }
-          // else {
-          //   dragSelectElement.style.top = `${clientY}px`;
-          //   dragSelectElement.style.width = `${x - clientX}px`;
-          //   dragSelectElement.style.height = `${y - clientY}px`;
-          //   anchorPoint = {
-          //     x: clientX,
-          //     y: clientY,
-          //   };
-          // }
-          if (clientY - y >= 0) {
-            dragSelectElement.style.top = `${y}px`;
-            dragSelectElement.style.height = `${clientY - y}px`;
-          } else {
-            dragSelectElement.style.top = `${clientY}px`;
-            dragSelectElement.style.height = `${y - clientY}px`;
+          if (top <= imageElementPosition.height && top >= 0) {
+            if (top - anchorY >= 0) {
+              dragSelectElement.style.top = `${anchorY}px`;
+              dragSelectElement.style.height = `${top - anchorY}px`;
+            } else {
+              dragSelectElement.style.top = `${top}px`;
+              dragSelectElement.style.height = `${anchorY - top}px`;
+            }
           }
-          // else {
-          //   dragSelectElement.style.top = `${clientY}px`;
-          //   dragSelectElement.style.width = `${x - clientX}px`;
-          //   dragSelectElement.style.height = `${y - clientY}px`;
-          //   anchorPoint = {
-          //     x: clientX,
-          //     y: clientY,
-          //   };
-          // }
-          console.log(event);
         }
       }
     </script>
   </head>
   <body>
-    <div
-      class="image"
-      onmousedown="mouseDown()"
-      onmouseup="mouseUp()"
-      onmousemove="mouseMove()"
-    >
-      hello
-    </div>
+    <div class="image" onmousedown="mouseDown()"></div>
   </body>
 </html>
