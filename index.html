@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-      /* * {
+      * {
         outline: 1px dotted black !important;
-      } */
+      }
       body {
         margin: 0px;
         position: relative;
@@ -68,8 +68,8 @@
           dragSelectElement.style.position = "absolute";
           dragSelectElement.style.top = `${offsetY}px`;
           dragSelectElement.style.left = `${offsetX}px`;
-          dragSelectElement.style.outline = "10px solid blue";
           dragSelectElement.style.border = "10px solid black";
+          dragSelectElement.style.boxSizing = "border-box";
           anchorPoint = { x: offsetX, y: offsetY };
           imageElement.appendChild(dragSelectElement);
         }
@@ -96,9 +96,9 @@
           const left = pageX - imageElementPosition.x;
           const top = pageY - imageElementPosition.y;
           const { x: anchorX, y: anchorY } = anchorPoint;
-          console.log("outline", dragSelectElement.style.outline);
-          console.log("border", dragSelectElement.style.border);
-          if (left < imageElementPosition.width && left >= 0) {
+          const dragSelectElementPosition =
+            getElementPosition(dragSelectElement);
+          if (left <= imageElementPosition.width && left >= 0) {
             if (left - anchorX >= 0) {
               dragSelectElement.style.left = `${anchorX}px`;
               dragSelectElement.style.width = `${left - anchorX}px`;
