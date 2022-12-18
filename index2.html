@@ -21,6 +21,7 @@
 			}
 			.drag-select-marker {
 				position: absolute;
+				box-sizing: border-box;
 				width: 100px;
 				height: 100px;
 				left: 10px;
@@ -34,53 +35,76 @@
 		</div>
 	</body>
 	<script>
-		let abortController = null;
-		function getDragSelectMarker() {
+		let abortController = null,
+			anchorPoint = {},
+			masterAnchorPoint = {},
+			dragSelectMarker = null;
+		function getMarker() {
 			const [el] = document.getElementsByClassName('drag-select-marker');
 			return el;
 		}
-		function getDragSelectContainer() {
+		function getContainer() {
 			const [el] = document.getElementsByClassName('drag-select-container');
 			return el;
 		}
-		const dragSelectMarker = getDragSelectMarker();
-		dragSelectMarker.addEventListener('mousedown', mouseDown);
-		let anchorPoint;
+		function getDimension(el) {
+			const { width, height } = el.getBoundingClientRect();
+			return { width, height };
+		}
+		function getPosition(el) {
+			const { x, y } = el.getBoundingClientRect();
+			return {
+				x: x + window.scrollX,
+				y: y + window.scrollY,
+			};
+			return pos;
+		}
 		function mouseDown() {
-			const { pageX, pageY } = event;
-			console.log(pageX, pageY);
 			anchorPoint = {
 				x: event.pageX,
 				y: event.pageY,
 			};
 			abortController = new AbortController();
-			document.addEventListener(
-				'mousemove',
-				() => {
-					const { pageX, pageY } = event;
-					const { offsetLeft, offsetTop } = dragSelectMarker;
-
-					// Horizontal move
-					const left = offsetLeft + pageX - anchorPoint.x;
-					dragSelectMarker.style.left = `${left}px`;
-					anchorPoint.x = pageX;
-
-					// Vertical move
-					const top = offsetTop + pageY - anchorPoint.y;
-					dragSelectMarker.style.top = `${top}px`;
-					anchorPoint.y = pageY;
-				},
-				{
-					signal: abortController.signal,
-				},
-			);
-			document.addEventListener(
-				'mouseup',
-				() => {
-					abortController.abort();
-				},
-				{ signal: abortController.signal },
-			);
+			document.addEventListener('mousemove', mouseMove, {
+				signal: abortController.signal,
+			});
+			document.addEventListener('mouseup', mouseUp, { signal: abortController.signal });
 		}
+		function mouseMove() {
+			const { pageX, pageY } = event;
+			const { offsetLeft, offsetTop } = getMarker();
+			const { width: containerWidth, height: containerHeight } = getDimension(getContainer());
+			const { width: markerWidth, height: markerHeight } = getDimension(dragSelectMarker);
+
+			// Horizontal move
+			const left = offsetLeft + pageX - anchorPoint.x;
+			const maxLeft = containerWidth - markerWidth;
+			if (left >= 0 && left <= maxLeft) {
+				dragSelectMarker.style.left = `${left}px`;
+				anchorPoint.x = pageX;
+			} else if (left < 0) {
+				dragSelectMarker.style.left = `${0}px`;
+			} else if (left > maxLeft) {
+				dragSelectMarker.style.left = `${maxLeft}px`;
+			}
+
+			// Vertical move
+			const top = offsetTop + pageY - anchorPoint.y;
+			const maxTop = containerHeight - markerHeight;
+			if (top >= 0 && top <= maxTop) {
+				dragSelectMarker.style.top = `${top}px`;
+				anchorPoint.y = pageY;
+			} else if (top < 0) {
+				dragSelectMarker.style.top = `${0}px`;
+			} else if (top > maxTop) {
+				dragSelectMarker.style.top = `${maxTop}px`;
+			}
+		}
+		function mouseUp() {
+			abortController.abort();
+			abortController = null;
+		}
+		dragSelectMarker = getMarker();
+		dragSelectMarker.addEventListener('mousedown', mouseDown);
 	</script>
 </html>
