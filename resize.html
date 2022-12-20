@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			* {
+				outline: 1px dotted black !important;
+			}
+			body {
+				margin: 0px;
+			}
+			.container {
+				width: 300px;
+				height: 300px;
+				position: relative;
+				margin-top: 60px;
+				margin-left: 60px;
+			}
+			.marker {
+				width: 150px;
+				height: 150px;
+				top: 30px;
+				left: 30px;
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="marker"></div>
+		</div>
+	</body>
+	<script>
+		class Handle {
+			constructor(direction) {
+				this.direction = direction;
+				this.handle = this.makeHandle(this.direction);
+				this.handle.addEventListener('mousedown', this.mouseDown);
+			}
+			mouseDown() {
+				anchorPoint = {
+					x: event.PageX,
+					y: event.pageY,
+				};
+				console.log(event);
+				abortController = new AbortController();
+				document.addEventListener('mousemove', mouseMove, { signal: abortController.signal });
+				document.addEventListener('mouseup', mouseUp, { signal: abortController.signal });
+			}
+			mouseUp() {
+				abortController.abort();
+			}
+			mouseMove() {
+				const { pageX, pageY } = event;
+				const { offsetWidth, offsetHeight } = marker;
+
+				// Horizontal move
+				const width = offsetWidth + pageX - anchorPoint.x;
+				marker.style.width = `${width}px`;
+				anchorPoint.x = pageX;
+
+				// Vertical move
+				const height = offsetHeight + pageY - anchorPoint.y;
+				anchorPoint.y = pageY;
+				marker.style.height = `${height}px`;
+				console.log(event);
+			}
+			makeHandle(direction) {
+				const handle = document.createElement('div');
+				handle.style.height = '10px';
+				handle.style.width = '10px';
+				handle.style.position = 'absolute';
+				const offset = 3;
+				switch (direction) {
+					case 'nw':
+						handle.style.top = '-5px';
+						handle.style.left = '-5px';
+						break;
+					case 'se':
+						handle.style.bottom = '-5px';
+						handle.style.right = '-5px';
+						break;
+					case 'ne':
+						handle.style.right = '-5px';
+						handle.style.top = '-5px';
+						break;
+					case 'sw':
+						handle.style.left = '-5px';
+						handle.style.bottom = '-5px';
+						break;
+				}
+				return handle;
+			}
+		}
+		// const defaultOptions = Object.freeze({
+		// 	// handles: ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'],
+		// 	handles: ['se'],
+		// });
+		function getMarker() {
+			const [el] = document.getElementsByClassName('marker');
+			return el;
+		}
+
+		function getContainer() {
+			const [el] = document.getElementsByClassName('container');
+			return el;
+		}
+		const handle = new Handle('nw');
+	</script>
+</html>
