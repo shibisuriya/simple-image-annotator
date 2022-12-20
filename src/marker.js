@@ -1,3 +1,4 @@
+import { getDimension } from './utils/utils.js';
 export default class Marker {
 	/**
 	 * Create a drag-select marker.
@@ -15,7 +16,7 @@ export default class Marker {
 		if (height) {
 			this.marker.style.height = `${height}px`;
 		}
-		this.marker.style.border = '5px solid black';
+		this.marker.style.border = '3px solid #5DE23C';
 		this.marker.style.boxSizing = 'border-box';
 	}
 	/**
@@ -60,5 +61,63 @@ export default class Marker {
 			x: this.getX(),
 			y: this.getY(),
 		};
+	}
+
+	mouseUp() {
+		this.disengageController.abort();
+	}
+	mouseMove() {
+		const { pageX, pageY } = event;
+		const { offsetLeft, offsetTop } = this.marker;
+		const { width: containerWidth, height: containerHeight } = this.getLayoutDimension();
+		const { width: markerWidth, height: markerHeight } = getDimension(this.marker);
+
+		// Horizontal move
+		const left = offsetLeft + pageX - this.anchorPoint.x;
+		const maxLeft = containerWidth - markerWidth;
+		if (left >= 0 && left <= maxLeft) {
+			this.marker.style.left = `${left}px`;
+			this.anchorPoint.x = pageX;
+		} else if (left < 0) {
+			this.marker.style.left = `${0}px`;
+		} else if (left > maxLeft) {
+			this.marker.style.left = `${maxLeft}px`;
+		}
+
+		// Vertical move
+		const top = offsetTop + pageY - this.anchorPoint.y;
+		const maxTop = containerHeight - markerHeight;
+		if (top >= 0 && top <= maxTop) {
+			this.marker.style.top = `${top}px`;
+			this.anchorPoint.y = pageY;
+		} else if (top < 0) {
+			this.marker.style.top = `${0}px`;
+		} else if (top > maxTop) {
+			this.marker.style.top = `${maxTop}px`;
+		}
+	}
+	inserted() {
+		this.start();
+	}
+	start() {
+		this.engageController = new AbortController();
+		this.marker.addEventListener('mousedown', this.mouseDown.bind(this), {
+			signal: this.engageController.signal,
+		});
+	}
+	stop() {
+		this.engageController.abort();
+	}
+	mouseDown(e) {
+		e.stopPropagation();
+		this.anchorPoint = {
+			x: e.pageX,
+			y: e.pageY,
+		};
+		this.disengageController = new AbortController();
+		document.addEventListener('mousemove', this.mouseMove.bind(this), {
+			signal: this.disengageController.signal,
+		});
+		document.addEventListener('mouseup', this.mouseUp.bind(this), { signal: this.disengageController.signal });
 	}
 }

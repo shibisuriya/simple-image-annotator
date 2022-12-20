@@ -28,7 +28,7 @@ export default class Layout {
 		}
 		this.start();
 	}
-	updateMarker(marker) {}
+	updateMarker({ id, options }) {}
 	getMarkers() {
 		return this.markers.map((marker) => {
 			return {
@@ -61,6 +61,8 @@ export default class Layout {
 	 * @param {Array.<Object>} markers - An array of markers.
 	 */
 	createMarker(marker) {
+		Marker.prototype.getLayoutDimension = this.getLayoutDimension.bind(this);
+		Marker.prototype.getLayoutPosition = this.getLayoutDimension.bind(this);
 		return new Marker(marker);
 	}
 	emitEvent(eventName, eventData) {
@@ -69,6 +71,7 @@ export default class Layout {
 		}
 	}
 	engage(e) {
+		// e.stopPropagation();
 		const { which: button, pageX, pageY } = e;
 		if (button == LEFT_MOUSE) {
 			this.events = {};
@@ -178,6 +181,7 @@ export default class Layout {
 				width: this.currentMarker.getWidth(),
 				height: this.currentMarker.getHeight(),
 			});
+			this.currentMarker.inserted();
 			this.currentMarker = null;
 		}
 	}
