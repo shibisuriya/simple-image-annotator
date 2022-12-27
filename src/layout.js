@@ -22,6 +22,7 @@ export default class Layout {
 	constructor({ layout, markers = [], layoutOptions = {}, markerOptions = {} } = {}) {
 		this.markers = [];
 		this.layout = layout;
+		this.layout.style.position = 'relative';
 		this.registeredEvents = {};
 		this.setLayoutOptions(layoutOptions);
 		if (markerOptions) {
