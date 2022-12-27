@@ -61,5 +61,14 @@ save.addEventListener('click', () => {
 });
 changeMarkerOptions.addEventListener('click', () => {
 	console.log('changerMakerOptions');
-	layout.setMarkerOptions({ handles: ['e', 'w'] });
+	layout.setMarkerOptions({
+		handles: [
+			{ direction: 'e', offset: '-15px', width: '20px', height: '20px' },
+			{ direction: 's', offset: '-15px', width: '20px', height: '20px' },
+			{ direction: 'n', offset: '-15px', width: '20px', height: '20px' },
+		],
+		styles: {
+			border: '5px solid violet',
+		},
+	});
 });

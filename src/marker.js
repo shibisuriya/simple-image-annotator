@@ -11,6 +11,7 @@ export default class Marker {
 		this.styles = styles;
 		this.handles = [];
 		this.marker = document.createElement('div');
+		this.marker.draggable = false;
 		this.marker.style.position = 'absolute';
 		this.marker.style.left = `${x}px`;
 		this.marker.style.top = `${y}px`;
@@ -25,16 +26,16 @@ export default class Marker {
 		this.createHandles(handles);
 	}
 	createHandles(handles) {
-		Handle.prototype.getMarkerHeight = this.getHeight.bind(this);
-		Handle.prototype.getMarkerWidth = this.getWidth.bind(this);
-		Handle.prototype.setMarkerHeight = this.setHeight.bind(this);
-		Handle.prototype.setMarkerWidth = this.setWidth.bind(this);
-		Handle.prototype.setMarkerY = this.setY.bind(this);
-		Handle.prototype.setMarkerX = this.setX.bind(this);
-		Handle.prototype.getLayoutDimension = this.getLayoutDimension.bind(this);
-		Handle.prototype.getLayoutPosition = this.getLayoutPosition.bind(this);
 		handles.forEach((options) => {
 			const handle = new Handle(options);
+			handle['getMarkerHeight'] = this.getHeight.bind(this);
+			handle['getMarkerWidth'] = this.getWidth.bind(this);
+			handle['setMarkerHeight'] = this.setHeight.bind(this);
+			handle['setMarkerWidth'] = this.setWidth.bind(this);
+			handle['setMarkerY'] = this.setY.bind(this);
+			handle['setMarkerX'] = this.setX.bind(this);
+			handle['getLayoutDimension'] = this.getLayoutDimension.bind(this);
+			handle['getLayoutPosition'] = this.getLayoutPosition.bind(this);
 			this.addHandle(handle);
 		});
 	}

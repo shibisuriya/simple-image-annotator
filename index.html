@@ -20,18 +20,26 @@
 				height: 500px;
 				background-color: grey;
 				color: black;
-				position: absolute;
-				left: 100px;
-				top: 100px;
+				position: relative;
+				margin: 100px;
+			}
+			.controls {
+				border: 1px solid red;
+				padding: 15px;
+			}
+			.data {
+				display: block;
 			}
 		</style>
 	</head>
 
 	<body>
-		<button id="save">Save</button>
-		<button id="changeMarkerOptions">Change marker options</button>
-		<div class="layout"></div>
+		<div class="controls">
+			<button id="save">Save</button>
+			<button id="changeMarkerOptions">Change marker options</button>
+		</div>
 		<div class="data"></div>
+		<div class="layout"></div>
 	</body>
 	<script type="module" src="./src/index.js"></script>
 </html>

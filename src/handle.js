@@ -168,6 +168,7 @@ export default class Handle {
 	}
 	makeHandle(direction) {
 		const handle = document.createElement('div');
+		handle.draggable = false;
 		handle.style.height = this.height;
 		handle.style.width = this.width;
 		handle.style.position = 'absolute';
