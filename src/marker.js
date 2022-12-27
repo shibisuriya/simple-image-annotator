@@ -10,6 +10,7 @@ export default class Marker {
 		console.log('s', styles);
 		this.styles = styles;
 		this.handles = [];
+		this.areHandlesVisible = false;
 		this.marker = document.createElement('div');
 		this.marker.draggable = false;
 		this.marker.style.position = 'absolute';
@@ -24,6 +25,21 @@ export default class Marker {
 		Object.assign(this.marker.style, styles);
 		this.marker.style.boxSizing = 'border-box';
 		this.createHandles(handles);
+		this.hideHandles();
+	}
+	showHandles() {
+		console.log('show handles', this.handles);
+		this.areHandlesVisible = true;
+		this.handles.forEach((handle) => {
+			handle.show();
+		});
+	}
+	hideHandles() {
+		console.log(this.handles);
+		this.areHandlesVisible = false;
+		this.handles.forEach((handle) => {
+			handle.hide();
+		});
 	}
 	createHandles(handles) {
 		handles.forEach((options) => {
@@ -127,11 +143,33 @@ export default class Marker {
 	inserted() {
 		this.start();
 	}
+	mouseEnter(e) {
+		this.showHandles();
+		console.log(e);
+	}
+	mouseLeave(e) {
+		console.log(e);
+		this.hideHandles();
+	}
 	start() {
 		this.engageController = new AbortController();
 		this.marker.addEventListener('mousedown', this.mouseDown.bind(this), {
 			signal: this.engageController.signal,
 		});
+		// this.marker.addEventListener('mouseenter', this.mouseEnter.bind(this), {
+		// 	signal: this.engageController.signal,
+		// });
+		// this.marker.addEventListener('mouseleave', this.mouseLeave.bind(this), {
+		// 	signal: this.engageController.signal,
+		// });
+		this.marker.addEventListener('click', this.showHideHandles.bind(this));
+	}
+	showHideHandles() {
+		if (this.areHandlesVisible) {
+			this.hideHandles();
+		} else {
+			this.showHandles();
+		}
 	}
 	stop() {
 		this.engageController.abort();

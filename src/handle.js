@@ -13,6 +13,12 @@ export default class Handle {
 		this.handle = this.makeHandle(this.direction);
 		this.handle.addEventListener('mousedown', this.mouseDown.bind(this));
 	}
+	hide() {
+		this.handle.style.display = 'none';
+	}
+	show() {
+		this.handle.style.display = 'block';
+	}
 	getHandleElement() {
 		return this.handle;
 	}

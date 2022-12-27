@@ -1,4 +1,4 @@
-import { getDimension, getPosition } from './utils/utils.js';
+import { getDimension, getPosition, isEmpty } from './utils/utils.js';
 import { LEFT_MOUSE } from './constants/constants.js';
 // import Events from 'events.js';
 import Marker from './marker.js';
@@ -22,16 +22,27 @@ export default class Layout {
 	constructor({ layout, markers = [], layoutOptions = {}, markerOptions = {} } = {}) {
 		this.markers = [];
 		this.layout = layout;
-		this.layout.style.position = 'relative';
+		this.makeLayoutRelative();
 		this.registeredEvents = {};
 		this.setLayoutOptions(layoutOptions);
-		if (markerOptions) {
+		if (!isEmpty(markerOptions)) {
 			this.setMarkerOptions(markerOptions);
 		}
 		if (markers.length > 0) {
 			this.addMakers(...markers);
 		}
 		this.start();
+	}
+	makeLayoutRelative() {
+		// All the markers are placed relative to layout's position.
+		this.oldLayoutPosition = this.layout.style.position || 'static';
+		this.layout.style.position = 'relative';
+	}
+	resetLayoutPosition() {
+		this.layout.style.position = this.oldLayoutPosition;
+	}
+	destroy() {
+		this.resetLayoutPosition();
 	}
 	updateMarker({ id, options }) {}
 	getMarkers() {

@@ -7,7 +7,14 @@ const layout = new Layout({
 	layout: getLayout(),
 	markerOptions: {
 		handles: [
-			{ direction: 'se', offset: '-17px', shape: 'circle', width: '30px', height: '500px' },
+			{
+				direction: 'se',
+				offset: '-17px',
+				shape: 'circle',
+				width: '30px',
+				height: '500px',
+				showWhileInserting: false,
+			},
 			{
 				direction: 'ne',
 				offset: '-10px',
@@ -72,3 +79,17 @@ changeMarkerOptions.addEventListener('click', () => {
 		},
 	});
 });
+start.addEventListener('click', () => {
+	console.log('Started');
+	layout.start();
+});
+Stop.addEventListener('click', () => {
+	console.log('Stopped.');
+	layout.stop();
+});
+document.getElementById('destory').addEventListener('click', () => {
+	console.log('Destory');
+	layout.destroy();
+});
+// To-do(s)
+// 1) Show handles only on hover.
