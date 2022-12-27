@@ -124,6 +124,44 @@
 			const newY = pageY - containerY
 			this.setMarkerY(newY)
 		}
+		n() {
+			console.log('north')
+			const { pageY } = event
+			const newHeight = this.getMarkerHeight() + this.anchorPoint.y - pageY
+			this.setMarkerHeight(newHeight)
+			this.anchorPoint.y = pageY
+			const { y: containerY } = getPosition(getContainer())
+			this.setMarkerY(pageY - containerY)
+
+		}
+		s() {
+			console.log('south')
+			const { pageY } = event
+			const newHeight = this.getMarkerHeight() + pageY - this.anchorPoint.y
+			this.setMarkerHeight(newHeight)
+			this.anchorPoint.y = pageY
+		}
+		e() {
+			console.log('east')
+			const { pageX } = event
+			const newWidth = this.getMarkerWidth() + pageX - this.anchorPoint.x
+			this.setMarkerWidth(newWidth)
+			this.anchorPoint.x = pageX
+
+		}
+		w() {
+			console.log('west')
+			const { pageX } = event
+			const newWidth = this.getMarkerWidth() + this.anchorPoint.x - pageX
+			this.setMarkerWidth(newWidth)
+			this.anchorPoint.x = pageX
+
+
+			const { x: containerX } = getPosition(getContainer())
+			console.log(containerX - pageX)
+			this.setMarkerX(pageX - containerX)
+
+		}
 		getMarkerWidth() {
 			return getMarker().offsetWidth
 		}
@@ -155,6 +193,18 @@
 				case 'ne':
 					this.ne();
 					break;
+				case 'n':
+					this.n();
+					break;
+				case 's':
+					this.s()
+					break;
+				case 'e':
+					this.e()
+					break;
+				case 'w':
+					this.w()
+					break;
 			}
 		}
 		makeHandle(direction) {
@@ -162,24 +212,45 @@
 			handle.style.height = '10px';
 			handle.style.width = '10px';
 			handle.style.position = 'absolute';
-			const offset = 3;
+			const offset = -5;
 			switch (direction) {
 				case 'nw':
-					handle.style.top = '-5px';
-					handle.style.left = '-5px';
+					handle.style.top = `${offset}px`;
+					handle.style.left = `${offset}px`;
 					break;
 				case 'se':
-					handle.style.bottom = '-5px';
-					handle.style.right = '-5px';
+					handle.style.bottom = `${offset}px`;
+					handle.style.right = `${offset}px`;
 					break;
 				case 'ne':
-					handle.style.right = '-5px';
-					handle.style.top = '-5px';
+					handle.style.right = `${offset}px`;
+					handle.style.top = `${offset}px`;
 					break;
 				case 'sw':
-					handle.style.left = '-5px';
-					handle.style.bottom = '-5px';
+					handle.style.left = `${offset}px`;
+					handle.style.bottom = `${offset}px`;
 					break;
+				case 'n':
+					handle.style.top = `${offset}px`
+					handle.style.left = '50%'
+					handle.style.transform = 'translateX(-50%)'
+					break;
+				case 's':
+					handle.style.bottom = `${offset}px`
+					handle.style.left = '50%'
+					handle.style.transform = 'translateX(-50%)'
+					break;
+				case 'e':
+					handle.style.right = `${offset}px`
+					handle.style.top = '50%'
+					handle.style.transform = 'translateY(-50%)'
+					break;
+				case 'w':
+					handle.style.left = `${offset}px`
+					handle.style.transform = 'translateY(-50%)'
+					handle.style.top = '50%'
+					break;
+
 			}
 			getMarker().appendChild(handle);
 			return handle;
@@ -206,6 +277,11 @@
 	const ne = new Handle('ne');
 	const nw = new Handle('nw');
 	const sw = new Handle('sw');
+
+	const e = new Handle('e');
+	const w = new Handle('w');
+	const n = new Handle('n');
+	const s = new Handle('s');
 
 </script>
 
