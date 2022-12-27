@@ -7,22 +7,26 @@ const defaultMarkerOptions = {};
 const VALID_EVENTS = ['engaged', 'disengaged', 'moved', 'resized', 'removed'];
 export default class Layout {
 	/**
-	 * Set `markerOptions`, `markerOptions` is an object that contains information
-	 * that is used to configure a marker when the user adds it to the layout."
+	 * Set `markerOptions`, `markerOptions` is an object that contains information (such as borders, shapes, etc.)
+	 * that is used to construct a marker when the user adds it to the layout. `setMarkerOptions()` won't affect
+	 * existing markers but will change the attributes of the markers which will be added to the layout in the future.
 	 * @param {*} markerOptions
 	 */
 	setMarkerOptions(markerOptions) {
+		console.log(markerOptions);
 		this.markerOptions = Object.assign({}, defaultMarkerOptions, markerOptions);
 	}
 	setLayoutOptions(layoutOptions) {
 		this.layoutOptions = Object.assign({}, defaultLayoutOptions, layoutOptions);
 	}
-	constructor(layout, markers = [], layoutOptions = {}, markerOptions = {}) {
+	constructor({ layout, markers = [], layoutOptions = {}, markerOptions = {} } = {}) {
 		this.markers = [];
 		this.layout = layout;
 		this.registeredEvents = {};
 		this.setLayoutOptions(layoutOptions);
-		this.setMarkerOptions(markerOptions);
+		if (markerOptions) {
+			this.setMarkerOptions(markerOptions);
+		}
 		if (markers.length > 0) {
 			this.addMakers(...markers);
 		}
@@ -61,8 +65,9 @@ export default class Layout {
 	 * @param {Array.<Object>} markers - An array of markers.
 	 */
 	createMarker(marker) {
+		console.log('marker -> ', marker);
 		Marker.prototype.getLayoutDimension = this.getLayoutDimension.bind(this);
-		Marker.prototype.getLayoutPosition = this.getLayoutDimension.bind(this);
+		Marker.prototype.getLayoutPosition = this.getLayoutPosition.bind(this);
 		return new Marker(marker);
 	}
 	emitEvent(eventName, eventData) {
@@ -78,7 +83,11 @@ export default class Layout {
 			const layoutPosition = this.getLayoutPosition();
 			const left = pageX - layoutPosition.x; // pageX = clientX + window.scrollX
 			const top = pageY - layoutPosition.y; // pageY = clientY + window.scrollY
-			this.currentMarker = this.createMarker({ x: left, y: top });
+			this.currentMarker = this.createMarker({
+				x: left,
+				y: top,
+				...this.markerOptions,
+			});
 			this.addMarker(this.currentMarker);
 			this.anchorPoint = { x: left, y: top };
 

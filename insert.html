@@ -6,38 +6,31 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 		<style>
+			* {
+				outline: 1px dotted black !important;
+			}
+
 			body {
 				margin: 0px;
+				position: relative;
 			}
+
 			.layout {
-				width: 1120px;
-				height: 630px;
+				width: 500px;
+				height: 500px;
+				background-color: grey;
 				color: black;
-			}
-			.outside {
-				margin-left: 100px;
-				margin-top: 100px;
+				position: absolute;
+				left: 100px;
+				top: 100px;
 			}
 		</style>
 	</head>
-	<body>
-		<div style="position: relative; display: block" class="outside">
-			<div
-				class="layout"
-				style="z-index: 9999; background-color: transparent; position: absolute; top: 0px; left: 0px"
-			></div>
 
-			<iframe
-				width="1120"
-				height="630"
-				src="https://www.youtube.com/embed/Gb9SoQJ0F4E?autoplay=1"
-				title="YouTube video player"
-				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-				allowfullscreen
-			></iframe>
-		</div>
-		<!-- <button id="save" style="display: block">Save</button> -->
+	<body>
+		<button id="save">Save</button>
+		<button id="changeMarkerOptions">Change marker options</button>
+		<div class="layout"></div>
 		<div class="data"></div>
 	</body>
 	<script type="module" src="./src/index.js"></script>

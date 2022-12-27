@@ -1,11 +1,15 @@
 import { getDimension } from './utils/utils.js';
+import Handle from './handle.js';
 export default class Marker {
 	/**
 	 * Create a drag-select marker.
 	 * @param {*} x X coordinate of the drag-select marker.
 	 * @param {*} y Y coordinate of the drag-select marker.
 	 */
-	constructor({ x, y, width = 0, height = 0 }) {
+	constructor({ x, y, width = 0, height = 0, handles, styles }) {
+		console.log('s', styles);
+		this.styles = styles;
+		this.handles = [];
 		this.marker = document.createElement('div');
 		this.marker.style.position = 'absolute';
 		this.marker.style.left = `${x}px`;
@@ -16,8 +20,30 @@ export default class Marker {
 		if (height) {
 			this.marker.style.height = `${height}px`;
 		}
-		this.marker.style.border = '3px solid #5DE23C';
+		Object.assign(this.marker.style, styles);
 		this.marker.style.boxSizing = 'border-box';
+		this.createHandles(handles);
+	}
+	createHandles(handles) {
+		Handle.prototype.getMarkerHeight = this.getHeight.bind(this);
+		Handle.prototype.getMarkerWidth = this.getWidth.bind(this);
+		Handle.prototype.setMarkerHeight = this.setHeight.bind(this);
+		Handle.prototype.setMarkerWidth = this.setWidth.bind(this);
+		Handle.prototype.setMarkerY = this.setY.bind(this);
+		Handle.prototype.setMarkerX = this.setX.bind(this);
+		Handle.prototype.getLayoutDimension = this.getLayoutDimension.bind(this);
+		Handle.prototype.getLayoutPosition = this.getLayoutPosition.bind(this);
+		handles.forEach((options) => {
+			const handle = new Handle(options);
+			this.addHandle(handle);
+		});
+	}
+	getMarkerElement() {
+		return this.marker;
+	}
+	addHandle(handle) {
+		this.handles.push(handle);
+		this.getMarkerElement().appendChild(handle.getHandleElement());
 	}
 	/**
 	 * Returns the HTML element of the drag select marker.
@@ -67,6 +93,7 @@ export default class Marker {
 		this.disengageController.abort();
 	}
 	mouseMove() {
+		console.log('Marker is being moved.');
 		const { pageX, pageY } = event;
 		const { offsetLeft, offsetTop } = this.marker;
 		const { width: containerWidth, height: containerHeight } = this.getLayoutDimension();
