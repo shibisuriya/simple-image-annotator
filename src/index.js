@@ -31,8 +31,9 @@ const layout = new Layout({
 			{ direction: 'e', offset: '-5px', width: '20px', height: '20px' },
 			{ direction: 'w', offset: '-5px', width: '20px', height: '20px' },
 			{ direction: 'n', offset: '-5px', width: '20px', height: '20px' },
-			{ direction: 's', offset: '-5px', width: '20px', height: '20px' },
+			{ direction: 's', offsetY: '-5px', width: '20px', height: '20px' },
 		],
+		slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '5px', offsetY: '5px' },
 		alwaysShowMarkers: true,
 		showMarkersOnHover: false,
 		showMarkersOnClick: false,
@@ -41,8 +42,9 @@ const layout = new Layout({
 		minHeight: '100px',
 		maxWidth: '100px',
 		maxHeight: '100px',
+		boundedByLayout: true,
 		styles: {
-			border: '1px solid green',
+			border: '3px dotted yellow',
 		},
 	},
 });

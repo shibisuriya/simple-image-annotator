@@ -1,8 +1,10 @@
 export default class Handle {
-	constructor({ direction, offset, shape, width = '5px', height = '5px', styles }) {
+	constructor({ direction, offset, offsetX, offsetY, shape, width = '5px', height = '5px', styles }) {
 		this.direction = direction;
 		this.styles = styles;
 		this.offset = offset;
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
 		this.shape = shape;
 		if (this.shape == 'circle') {
 			this.width = this.height = width;
@@ -205,9 +207,9 @@ export default class Handle {
 				handle.style.transform = 'translateX(-50%)';
 				break;
 			case 's':
-				handle.style.bottom = `${this.offset}`;
+				handle.style.bottom = `${this.offsetY}`;
 				handle.style.left = '50%';
-				handle.style.transform = 'translateX(-50%)';
+				handle.style.transform = `translateX(-50%)`;
 				break;
 			case 'e':
 				handle.style.right = `${this.offset}`;

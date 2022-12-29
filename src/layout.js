@@ -13,7 +13,6 @@ export default class Layout {
 	 * @param {*} markerOptions
 	 */
 	setMarkerOptions(markerOptions) {
-		console.log(markerOptions);
 		this.markerOptions = Object.assign({}, defaultMarkerOptions, markerOptions);
 	}
 	setLayoutOptions(layoutOptions) {

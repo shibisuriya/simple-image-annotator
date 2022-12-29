@@ -1,4 +1,4 @@
-import { getDimension } from './utils/utils.js';
+import { getDimension, isEmpty } from './utils/utils.js';
 import Handle from './handle.js';
 export default class Marker {
 	/**
@@ -6,8 +6,8 @@ export default class Marker {
 	 * @param {*} x X coordinate of the drag-select marker.
 	 * @param {*} y Y coordinate of the drag-select marker.
 	 */
-	constructor({ x, y, width = 0, height = 0, handles, styles }) {
-		console.log('s', styles);
+	constructor({ x, y, width = 0, height = 0, handles, styles, slot }) {
+		console.log(slot);
 		this.styles = styles;
 		this.handles = [];
 		this.areHandlesVisible = false;
@@ -25,7 +25,38 @@ export default class Marker {
 		Object.assign(this.marker.style, styles);
 		this.marker.style.boxSizing = 'border-box';
 		this.createHandles(handles);
-		this.hideHandles();
+		// this.hideHandles();
+		this.slot = slot;
+		if (!isEmpty(slot)) {
+			this.addSlot();
+		}
+	}
+	addSlot() {
+		const { element, direction, offsetX, offsetY } = this.slot;
+		element.style.position = 'absolute';
+		switch (direction) {
+			case 'e':
+				break;
+			case 'w':
+				break;
+			case 'n':
+				break;
+			case 's':
+				element.style.bottom = '-50px';
+				element.style.left = '50%';
+				element.style.transform = 'translateX(-50%)';
+				break;
+
+			case 'ne':
+				break;
+			case 'se':
+				break;
+			case 'sw':
+				break;
+			case 'nw':
+				break;
+		}
+		this.getMarkerElement().appendChild(element);
 	}
 	showHandles() {
 		console.log('show handles', this.handles);
