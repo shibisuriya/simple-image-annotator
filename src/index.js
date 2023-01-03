@@ -5,6 +5,42 @@ const getLayout = () => {
 };
 const layout = new Layout({
 	layout: getLayout(),
+	markers: [
+		{
+			width: 160,
+			height: 127,
+			x: 44,
+			y: 70,
+			options: {
+				// If `options` is not provided then the `markerOptions` supplied.
+				handles: [
+					{
+						direction: 'se',
+						offset: '-17px',
+						shape: 'circle',
+						width: '30px',
+						height: '500px',
+						showWhileInserting: false,
+					},
+				],
+				slot: {
+					element: document.getElementById('test-input-box'),
+					direction: 's',
+					offsetX: '-60px',
+					offsetY: '5px',
+				},
+				alwaysShowMarkers: true,
+				showMarkersOnHover: false,
+				showMarkersOnClick: false,
+				shape: 'square | circle',
+				boundedByLayout: true,
+				styles: {
+					border: '3px dotted yellow',
+				},
+			},
+		},
+		{ width: 242, height: 110, x: 188, y: 290 },
+	],
 	markerOptions: {
 		handles: [
 			{
@@ -27,13 +63,22 @@ const layout = new Layout({
 			},
 			{ direction: 'sw', offset: '-5px', width: '20px', height: '20px' },
 			{ direction: 'nw', offset: '-5px', width: '20px', height: '20px' },
-
 			{ direction: 'e', offset: '-5px', width: '20px', height: '20px' },
 			{ direction: 'w', offset: '-5px', width: '20px', height: '20px' },
 			{ direction: 'n', offset: '-5px', width: '20px', height: '20px' },
-			{ direction: 's', offsetY: '-5px', width: '20px', height: '20px' },
+			{
+				direction: 's',
+				offsetX: '40%',
+				offsetY: '-30px',
+				offset: '30px',
+				width: '30px',
+				height: '30px',
+				styles: {
+					border: '5px solid white',
+				},
+			},
 		],
-		slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '5px', offsetY: '5px' },
+		slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '-60px', offsetY: '5px' },
 		alwaysShowMarkers: true,
 		showMarkersOnHover: false,
 		showMarkersOnClick: false,
@@ -48,21 +93,22 @@ const layout = new Layout({
 		},
 	},
 });
-// layout.on('engaged', (event) => {
-// 	console.log(event);
-// });
+
+layout.on('engaged', (event) => {
+	console.log(event);
+});
 layout.on('disengaged', (event) => {
 	console.log(event);
 });
-// layout.on('moved', (event) => {
-// 	console.log(event);
-// });
-// layout.on('resized', (event) => {
-// 	console.log(event);
-// });
-// layout.on('removed', (event) => {
-// 	console.log(event);
-// });
+layout.on('moved', (event) => {
+	console.log(event);
+});
+layout.on('resized', (event) => {
+	console.log(event);
+});
+layout.on('removed', (event) => {
+	console.log(event);
+});
 
 save.addEventListener('click', () => {
 	const [data] = document.getElementsByClassName('data');

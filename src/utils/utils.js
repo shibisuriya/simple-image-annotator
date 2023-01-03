@@ -1,9 +1,19 @@
 export const getPosition = (el) => {
 	const { scrollX, scrollY } = getScroll();
 	const { left, top } = el.getBoundingClientRect();
+	const x = left + scrollX;
+	const y = top + scrollY;
 	return {
-		x: left + scrollX,
-		y: top + scrollY,
+		x,
+		y,
+		leftEdgeX: x,
+		leftEdgeY: y,
+		rightEdgeX: left + getDimension(el).width,
+		rightEdgeY: top,
+		topEdgeY: y,
+		topEdgeX: x,
+		bottomEdgeX: x,
+		bottomEdgeY: y + getDimension(el).height,
 	};
 };
 

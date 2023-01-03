@@ -1,5 +1,6 @@
 export default class Handle {
-	constructor({ direction, offset, offsetX, offsetY, shape, width = '5px', height = '5px', styles }) {
+	constructor({ direction, offset, offsetX, offsetY, shape, width = '5px', height = '5px', styles, helpers }) {
+		this.helpers = helpers;
 		this.direction = direction;
 		this.styles = styles;
 		this.offset = offset;
@@ -44,115 +45,106 @@ export default class Handle {
 		const { pageX, pageY } = e;
 
 		// Vertical move
-		const newHeight = this.getMarkerHeight() + pageY - this.anchorPoint.y;
-		this.setMarkerHeight(newHeight);
+		const newHeight = this.helpers.getMarkerHeight() + pageY - this.anchorPoint.y;
+		this.helpers.setMarkerHeight(newHeight);
 		this.anchorPoint.y = pageY;
 
 		// Horizontal move
-		const newWidth = this.getMarkerWidth() + pageX - this.anchorPoint.x;
-		this.setMarkerWidth(newWidth);
+		const newWidth = this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x;
+		this.helpers.setMarkerWidth(newWidth);
 		this.anchorPoint.x = pageX;
 	}
 	nw(e) {
 		const { pageX, pageY } = e;
-		const { x: containerX, y: containerY } = this.getLayoutPosition();
+		const { x: containerX, y: containerY } = this.helpers.getLayoutPosition();
 
 		// Horizontal move
-		const newWidth = this.anchorPoint.x - pageX + this.getMarkerWidth();
+		const newWidth = this.anchorPoint.x - pageX + this.helpers.getMarkerWidth();
 		this.anchorPoint.x = pageX;
-		this.setMarkerX(pageX - containerX);
-		this.setMarkerWidth(newWidth);
+		this.helpers.setMarkerX(pageX - containerX);
+		this.helpers.setMarkerWidth(newWidth);
 
 		// Vertical move
-		const newHeight = this.anchorPoint.y - pageY + this.getMarkerHeight();
+		const newHeight = this.anchorPoint.y - pageY + this.helpers.getMarkerHeight();
 		this.anchorPoint.y = pageY;
-		this.setMarkerY(pageY - containerY);
-		this.setMarkerHeight(newHeight);
+		this.helpers.setMarkerY(pageY - containerY);
+		this.helpers.setMarkerHeight(newHeight);
 	}
 	sw(e) {
 		const { pageY, pageX } = e;
 
 		// Vertical move
-		const newHeight = this.getMarkerHeight() + pageY - this.anchorPoint.y;
-		this.setMarkerHeight(newHeight);
+		const newHeight = this.helpers.getMarkerHeight() + pageY - this.anchorPoint.y;
+		this.helpers.setMarkerHeight(newHeight);
 		this.anchorPoint.y = pageY;
 
 		// Horizontal move
 
-		const newWidth = this.anchorPoint.x - pageX + this.getMarkerWidth();
-		this.setMarkerWidth(newWidth);
+		const newWidth = this.anchorPoint.x - pageX + this.helpers.getMarkerWidth();
+		this.helpers.setMarkerWidth(newWidth);
 		this.anchorPoint.x = pageX;
-		const { x: containerX } = this.getLayoutPosition();
-		this.setMarkerX(pageX - containerX);
+		const { x: containerX } = this.helpers.getLayoutPosition();
+		this.helpers.setMarkerX(pageX - containerX);
 	}
 	ne(e) {
 		const { pageX, pageY } = e;
 
 		// Horizontal move
-		this.setMarkerWidth(this.getMarkerWidth() + pageX - this.anchorPoint.x);
+		this.helpers.setMarkerWidth(this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x);
 		this.anchorPoint.x = pageX;
 
 		// Vertical move
-		const newHeight = this.getMarkerHeight() + this.anchorPoint.y - pageY;
-		this.setMarkerHeight(newHeight);
+		const newHeight = this.helpers.getMarkerHeight() + this.anchorPoint.y - pageY;
+		this.helpers.setMarkerHeight(newHeight);
 		this.anchorPoint.y = pageY;
 
-		const { y: containerY } = this.getLayoutPosition();
+		const { y: containerY } = this.helpers.getLayoutPosition();
 		const newY = pageY - containerY;
-		this.setMarkerY(newY);
+		this.helpers.setMarkerY(newY);
 	}
 	n(e) {
 		console.log('north');
 		const { pageY } = e;
-		const newHeight = this.getMarkerHeight() + this.anchorPoint.y - pageY;
-		this.setMarkerHeight(newHeight);
+		const newHeight = this.helpers.getMarkerHeight() + this.anchorPoint.y - pageY;
+		this.helpers.setMarkerHeight(newHeight);
 		this.anchorPoint.y = pageY;
-		const { y: containerY } = this.getLayoutPosition();
-		this.setMarkerY(pageY - containerY);
+		const { y: containerY } = this.helpers.getLayoutPosition();
+		this.helpers.setMarkerY(pageY - containerY);
 	}
 	s(e) {
 		console.log('south');
 		const { pageY } = e;
-		const newHeight = this.getMarkerHeight() + pageY - this.anchorPoint.y;
-		this.setMarkerHeight(newHeight);
+		const newHeight = this.helpers.getMarkerHeight() + pageY - this.anchorPoint.y;
+		this.helpers.setMarkerHeight(newHeight);
 		this.anchorPoint.y = pageY;
 	}
 	e(e) {
 		console.log('east');
 		const { pageX } = e;
-		const newWidth = this.getMarkerWidth() + pageX - this.anchorPoint.x;
-		this.setMarkerWidth(newWidth);
-		this.anchorPoint.x = pageX;
+		const leftEdgePosition = this.r;
+		const boundedByLayout = true;
+		if (boundedByLayout == true) {
+			// const rightEdgePosition = this.helpers.getLayoutPosition().x + this.getLayoutDimension().width;
+			// if (pageX >= rightEdgePosition) {
+			// 	const newWidth = this.helpers.getMarkerHeight() +
+			// }
+		} else {
+			const newWidth = this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x;
+			this.helpers.setMarkerWidth(newWidth);
+			this.anchorPoint.x = pageX;
+		}
 	}
 	w(e) {
 		console.log('west');
 		const { pageX } = e;
-		const newWidth = this.getMarkerWidth() + this.anchorPoint.x - pageX;
-		this.setMarkerWidth(newWidth);
+		const newWidth = this.helpers.getMarkerWidth() + this.anchorPoint.x - pageX;
+		this.helpers.setMarkerWidth(newWidth);
 		this.anchorPoint.x = pageX;
 
-		const { x: containerX } = this.getLayoutPosition();
-		console.log(this.getLayoutPosition());
+		const { x: containerX } = this.helpers.getLayoutPosition();
+		console.log(this.helpers.getLayoutPosition());
 		console.log(containerX - pageX);
-		this.setMarkerX(pageX - containerX);
-	}
-	getMarkerWidth() {
-		return getMarker().offsetWidth;
-	}
-	setMarkerX(x) {
-		getMarker().style.left = `${x}px`;
-	}
-	setMarkerY(y) {
-		getMarker().style.top = `${y}px`;
-	}
-	getMarkerHeight() {
-		return getMarker().offsetHeight;
-	}
-	setMarkerWidth(width) {
-		getMarker().style.width = `${width}px`;
-	}
-	setMarkerHeight(height) {
-		getMarker().style.height = `${height}px`;
+		this.helpers.setMarkerX(pageX - containerX);
 	}
 	mouseMove() {
 		switch (this.direction) {
@@ -180,10 +172,22 @@ export default class Handle {
 		handle.style.height = this.height;
 		handle.style.width = this.width;
 		handle.style.position = 'absolute';
+		handle.style.boxSizing = 'border-box';
 		Object.assign(handle.style, this.styles);
 		if (this.shape == 'circle') {
 			handle.style.borderRadius = '50%';
 		}
+		const getOffsetX = () => {
+			if (this.offsetX.includes('%')) {
+				return `${(parseInt(this.offsetX) / 100) * this.helpers.getMarkerWidth()}px`;
+			} else if (this.offsetX) {
+				return this.offsetXj;
+			} else if (this.offset) {
+				return this.offset;
+			} else {
+				return '0px';
+			}
+		};
 		switch (direction) {
 			case 'nw':
 				handle.style.top = `${this.offset}`;
@@ -209,7 +213,7 @@ export default class Handle {
 			case 's':
 				handle.style.bottom = `${this.offsetY}`;
 				handle.style.left = '50%';
-				handle.style.transform = `translateX(-50%)`;
+				handle.style.transform = `translateX(-50%) translateX(${getOffsetX()})`;
 				break;
 			case 'e':
 				handle.style.right = `${this.offset}`;

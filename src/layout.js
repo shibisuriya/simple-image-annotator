@@ -18,17 +18,15 @@ export default class Layout {
 	setLayoutOptions(layoutOptions) {
 		this.layoutOptions = Object.assign({}, defaultLayoutOptions, layoutOptions);
 	}
-	constructor({ layout, markers = [], layoutOptions = {}, markerOptions = {} } = {}) {
-		this.markers = [];
+	constructor({ layout, markers: preExistingMarkers = [], layoutOptions = {}, markerOptions = {} } = {}) {
 		this.layout = layout;
+		this.markers = [];
 		this.makeLayoutRelative();
 		this.registeredEvents = {};
 		this.setLayoutOptions(layoutOptions);
-		if (!isEmpty(markerOptions)) {
-			this.setMarkerOptions(markerOptions);
-		}
-		if (markers.length > 0) {
-			this.addMakers(...markers);
+		this.setMarkerOptions(markerOptions);
+		if (preExistingMarkers.length > 0) {
+			this.addPreExistingMarkers(...preExistingMarkers);
 		}
 		this.start();
 	}
@@ -76,7 +74,6 @@ export default class Layout {
 	 * @param {Array.<Object>} markers - An array of markers.
 	 */
 	createMarker(marker) {
-		console.log('marker -> ', marker);
 		Marker.prototype.getLayoutDimension = this.getLayoutDimension.bind(this);
 		Marker.prototype.getLayoutPosition = this.getLayoutPosition.bind(this);
 		return new Marker(marker);
@@ -113,9 +110,11 @@ export default class Layout {
 			this.emitEvent('engaged', { type: 'engaged', left, top });
 		}
 	}
-	addMarkers(...markers) {
+	addPreExistingMarkers(...markers) {
 		markers.forEach((marker) => {
-			this.addMarker(marker);
+			const newMarker = this.createMarker(marker);
+			this.addMarker(newMarker);
+			newMarker.inserted();
 		});
 	}
 	addMarker(marker) {

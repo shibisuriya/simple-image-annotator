@@ -1,45 +1,111 @@
-import { getDimension, isEmpty } from './utils/utils.js';
+import { getDimension, getPosition, isEmpty } from './utils/utils.js';
 import Handle from './handle.js';
+const defaultOptions = {
+	handles: [
+		{
+			direction: 'se',
+			offset: '-17px',
+			shape: 'circle',
+			width: '30px',
+			height: '500px',
+			showWhileInserting: false,
+		},
+		{
+			direction: 'ne',
+			offset: '-10px',
+			width: '20px',
+			height: '20px',
+			styles: {
+				backgroundColor: 'red',
+				border: '1px solid blue',
+			},
+		},
+		{ direction: 'sw', offset: '-5px', width: '20px', height: '20px' },
+		{ direction: 'nw', offset: '-5px', width: '20px', height: '20px' },
+		{ direction: 'e', offset: '-5px', width: '20px', height: '20px' },
+		{ direction: 'w', offset: '-5px', width: '20px', height: '20px' },
+		{ direction: 'n', offset: '-5px', width: '20px', height: '20px' },
+		{
+			direction: 's',
+			offsetX: '40%',
+			offsetY: '-30px',
+			offset: '30px',
+			width: '30px',
+			height: '30px',
+			styles: {
+				border: '5px solid white',
+			},
+		},
+	],
+	slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '-60px', offsetY: '5px' },
+	alwaysShowMarkers: true,
+	showMarkersOnHover: false,
+	showMarkersOnClick: false,
+	shape: 'square | circle',
+	minWidth: '100px',
+	minHeight: '100px',
+	maxWidth: '100px',
+	maxHeight: '100px',
+	boundedByLayout: true,
+	styles: {
+		border: '3px dotted yellow',
+	},
+};
 export default class Marker {
 	/**
 	 * Create a drag-select marker.
 	 * @param {*} x X coordinate of the drag-select marker.
 	 * @param {*} y Y coordinate of the drag-select marker.
 	 */
-	constructor({ x, y, width = 0, height = 0, handles, styles, slot }) {
-		console.log(slot);
-		this.styles = styles;
+	constructor({ x, y, width = 0, height = 0, options = {} }) {
 		this.handles = [];
-		this.areHandlesVisible = false;
-		this.marker = document.createElement('div');
-		this.marker.draggable = false;
-		this.marker.style.position = 'absolute';
-		this.marker.style.left = `${x}px`;
-		this.marker.style.top = `${y}px`;
-		if (width) {
-			this.marker.style.width = `${width}px`;
-		}
-		if (height) {
-			this.marker.style.height = `${height}px`;
-		}
-		Object.assign(this.marker.style, styles);
-		this.marker.style.boxSizing = 'border-box';
-		this.createHandles(handles);
-		// this.hideHandles();
-		this.slot = slot;
-		if (!isEmpty(slot)) {
-			this.addSlot();
-		}
+		this.setMarkerOptions(options);
+		this.element = this.createElement({ x, y, width, height, styles: this.options.styles });
+		this.addHandles(this.options.handles);
+		this.addSlot(this.options.slot);
+		// The marker has been inserted into the layout, now wait for the resize / move commands.
 	}
-	addSlot() {
-		const { element, direction, offsetX, offsetY } = this.slot;
+	setMarkerOptions(options) {
+		this.options = Object.assign({}, defaultOptions, options);
+	}
+	createElement({ x, y, width, height, styles = {} }) {
+		const element = document.createElement('div');
+		element.draggable = false;
+		Object.assign(
+			element.style,
+			{
+				left: `${x}px`,
+				top: `${y}px`,
+				width: `${width}px`,
+				height: `${height}px`,
+				position: 'absolute',
+				boxSizing: 'border-box',
+			},
+			styles,
+		);
+		return element;
+	}
+	addSlot(slot) {
+		const { element, direction, offsetX, offsetY } = slot;
 		element.style.position = 'absolute';
+		const getElementWidth = () => {
+			return -element.offsetWidth + offsetX;
+		};
 		switch (direction) {
 			case 'e':
+				element.style.right = '0px';
+				element.style.top = '50%';
+				element.style.transform = 'translateY(-50%)';
 				break;
 			case 'w':
+				element.style.right = `${getElementWidth()}`;
+				element.style.top = '50%';
+				element.style.transform = 'translateY(-50%)';
 				break;
 			case 'n':
+				element.style.top = `${offsetX}`;
+				element.style.left = '50%';
+				element.style.transform = 'translateX(-50%)';
 				break;
 			case 's':
 				element.style.bottom = '-50px';
@@ -72,57 +138,70 @@ export default class Marker {
 			handle.hide();
 		});
 	}
-	createHandles(handles) {
+	addHandles(handles) {
 		handles.forEach((options) => {
-			const handle = new Handle(options);
-			handle['getMarkerHeight'] = this.getHeight.bind(this);
-			handle['getMarkerWidth'] = this.getWidth.bind(this);
-			handle['setMarkerHeight'] = this.setHeight.bind(this);
-			handle['setMarkerWidth'] = this.setWidth.bind(this);
-			handle['setMarkerY'] = this.setY.bind(this);
-			handle['setMarkerX'] = this.setX.bind(this);
-			handle['getLayoutDimension'] = this.getLayoutDimension.bind(this);
-			handle['getLayoutPosition'] = this.getLayoutPosition.bind(this);
-			this.addHandle(handle);
+			const handle = new Handle({
+				...options,
+				...{
+					helpers: {
+						getMarkerHeight: this.getHeight.bind(this),
+						getMarkerWidth: this.getWidth.bind(this),
+						getMarkerPosition: this.getMarkerPosition.bind(this),
+						getMarkerDimension: this.getMarkerDimension.bind(this),
+						setMarkerHeight: this.setHeight.bind(this),
+						setMarkerWidth: this.setWidth.bind(this),
+						setMarkerY: this.setY.bind(this),
+						setMarkerX: this.setX.bind(this),
+						getMarkerY: this.getY.bind(this),
+						getMarkerX: this.getX.bind(this),
+						getLayoutDimension: this.getLayoutDimension.bind(this),
+						getLayoutPosition: this.getLayoutPosition.bind(this),
+					},
+				},
+			});
+			this.handles.push(handle);
+			this.getMarkerElement().appendChild(handle.getHandleElement());
 		});
 	}
-	getMarkerElement() {
-		return this.marker;
+	getMarkerDimension() {
+		return getDimension(this.getMarkerElement());
 	}
-	addHandle(handle) {
-		this.handles.push(handle);
-		this.getMarkerElement().appendChild(handle.getHandleElement());
+	getMarkerPosition() {
+		return getPosition(this.getMarkerElement());
 	}
 	/**
 	 * Returns the HTML element of the drag select marker.
 	 * @returns {HTMLElement}
 	 */
 	getElement() {
-		return this.marker;
+		return this.element;
+	}
+	getMarkerElement() {
+		return this.getElement();
 	}
 	setX(x) {
-		this.marker.style.left = `${x}px`;
+		this.getMarkerElement().style.left = `${x}px`;
 	}
 	setY(y) {
-		this.marker.style.top = `${y}px`;
+		this.getMarkerElement().style.top = `${y}px`;
 	}
 	setWidth(width) {
-		this.marker.style.width = `${width}px`;
+		this.getMarkerElement().style.width = `${width}px`;
 	}
 	setHeight(height) {
-		this.marker.style.height = `${height}px`;
+		this.getMarkerElement().style.height = `${height}px`;
 	}
 	getWidth() {
-		return this.marker.offsetWidth;
+		return this.getMarkerElement().offsetWidth;
 	}
 	getHeight() {
-		return this.marker.offsetHeight;
+		return this.getMarkerElement().offsetHeight;
 	}
 	getX() {
-		return this.marker.offsetLeft;
+		return this.getMarkerElement().offsetLeft;
 	}
 	getY() {
-		return this.marker.offsetTop;
+		return this.getMarkerElement().offsetTop;
 	}
 	getDimension() {
 		return {
@@ -130,45 +209,37 @@ export default class Marker {
 			height: this.getHeight(),
 		};
 	}
-	getPosition() {
-		return {
-			x: this.getX(),
-			y: this.getY(),
-		};
-	}
-
 	mouseUp() {
 		this.disengageController.abort();
 	}
 	mouseMove() {
-		console.log('Marker is being moved.');
 		const { pageX, pageY } = event;
-		const { offsetLeft, offsetTop } = this.marker;
+		const { offsetLeft, offsetTop } = this.getMarkerElement();
 		const { width: containerWidth, height: containerHeight } = this.getLayoutDimension();
-		const { width: markerWidth, height: markerHeight } = getDimension(this.marker);
+		const { width: markerWidth, height: markerHeight } = getDimension(this.getMarkerElement());
 
 		// Horizontal move
 		const left = offsetLeft + pageX - this.anchorPoint.x;
 		const maxLeft = containerWidth - markerWidth;
 		if (left >= 0 && left <= maxLeft) {
-			this.marker.style.left = `${left}px`;
+			this.getMarkerElement().style.left = `${left}px`;
 			this.anchorPoint.x = pageX;
 		} else if (left < 0) {
-			this.marker.style.left = `${0}px`;
+			this.getMarkerElement().style.left = `${0}px`;
 		} else if (left > maxLeft) {
-			this.marker.style.left = `${maxLeft}px`;
+			this.getMarkerElement().style.left = `${maxLeft}px`;
 		}
 
 		// Vertical move
 		const top = offsetTop + pageY - this.anchorPoint.y;
 		const maxTop = containerHeight - markerHeight;
 		if (top >= 0 && top <= maxTop) {
-			this.marker.style.top = `${top}px`;
+			this.getMarkerElement().style.top = `${top}px`;
 			this.anchorPoint.y = pageY;
 		} else if (top < 0) {
-			this.marker.style.top = `${0}px`;
+			this.getMarkerElement().style.top = `${0}px`;
 		} else if (top > maxTop) {
-			this.marker.style.top = `${maxTop}px`;
+			this.getMarkerElement().style.top = `${maxTop}px`;
 		}
 	}
 	inserted() {
@@ -184,7 +255,7 @@ export default class Marker {
 	}
 	start() {
 		this.engageController = new AbortController();
-		this.marker.addEventListener('mousedown', this.mouseDown.bind(this), {
+		this.getMarkerElement().addEventListener('mousedown', this.mouseDown.bind(this), {
 			signal: this.engageController.signal,
 		});
 		// this.marker.addEventListener('mouseenter', this.mouseEnter.bind(this), {
@@ -193,7 +264,7 @@ export default class Marker {
 		// this.marker.addEventListener('mouseleave', this.mouseLeave.bind(this), {
 		// 	signal: this.engageController.signal,
 		// });
-		this.marker.addEventListener('click', this.showHideHandles.bind(this));
+		this.getMarkerElement().addEventListener('click', this.showHideHandles.bind(this));
 	}
 	showHideHandles() {
 		if (this.areHandlesVisible) {
