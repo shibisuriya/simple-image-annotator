@@ -1,0 +1,35 @@
+{
+	"name": "drag-select-marker",
+	"version": "1.0.0",
+	"description": "Mark areas on HTML elements using drag select.",
+	"main": "./src/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shibisuriya/drag-select-marker.git"
+	},
+	"keywords": [
+		"drag-select",
+		"marker",
+		"mark",
+		"areas",
+		"facebook-tag",
+		"google-docs-comments",
+		"vercel-preview"
+	],
+	"author": "Shibi Suriya P",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/shibisuriya/drag-select-marker/issues"
+	},
+	"homepage": "https://github.com/shibisuriya/drag-select-marker#readme",
+	"devDependencies": {
+		"clean-webpack-plugin": "^4.0.0",
+		"html-webpack-plugin": "^5.5.0",
+		"webpack": "^5.75.0",
+		"webpack-cli": "^5.0.1"
+	}
+}
