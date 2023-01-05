@@ -83,10 +83,17 @@ export default class Layout {
 			this.registeredEvents[eventName](eventData);
 		}
 	}
+	setCursor() {
+		document.querySelector('body').style.cursor = 'crosshair';
+	}
+	resetCursor() {
+		document.querySelector('body').style.cursor = '';
+	}
 	engage(e) {
 		// e.stopPropagation();
 		const { which: button, pageX, pageY } = e;
 		if (button == LEFT_MOUSE) {
+			this.setCursor();
 			const layoutPosition = this.getLayoutPosition();
 			const x = pageX - layoutPosition.x; // pageX = clientX + window.scrollX
 			const y = pageY - layoutPosition.y; // pageY = clientY + window.scrollY
@@ -188,6 +195,7 @@ export default class Layout {
 	disengage(e) {
 		const { which: button } = e;
 		if (button == LEFT_MOUSE) {
+			this.resetCursor();
 			this.disengageController.abort();
 			this.anchorPoint = {};
 			this.emitEvent('disengaged', {

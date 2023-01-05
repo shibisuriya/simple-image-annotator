@@ -133,6 +133,9 @@ export default class Marker {
 	getElement() {
 		return this.element;
 	}
+	setMoveCursor() {
+		this.getMarkerElement().style.cursor = 'move';
+	}
 	getMarkerElement() {
 		return this.getElement();
 	}
@@ -194,6 +197,7 @@ export default class Marker {
 		}
 	}
 	inserted() {
+		this.setMoveCursor();
 		this.start();
 	}
 	// mouseEnter(e) {

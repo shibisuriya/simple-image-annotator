@@ -57,6 +57,7 @@ const layout = new Layout({
 			styles: {
 				// Handle's styles.
 				border: '5px solid white',
+				backgroundColor: 'green',
 			},
 		},
 		// slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '-160px', offsetY: '115px' },
@@ -64,7 +65,6 @@ const layout = new Layout({
 		minHeight: '100px',
 		maxWidth: '500px',
 		maxHeight: '500px',
-		boundedByLayout: true,
 		styles: {
 			// Marker's styles.
 			border: '3px dotted yellow',

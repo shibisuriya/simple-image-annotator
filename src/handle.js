@@ -120,18 +120,9 @@ export default class Handle {
 	e(e) {
 		console.log('east');
 		const { pageX } = e;
-		const leftEdgePosition = this.r;
-		const boundedByLayout = true;
-		if (boundedByLayout == true) {
-			// const rightEdgePosition = this.helpers.getLayoutPosition().x + this.getLayoutDimension().width;
-			// if (pageX >= rightEdgePosition) {
-			// 	const newWidth = this.helpers.getMarkerHeight() +
-			// }
-		} else {
-			const newWidth = this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x;
-			this.helpers.setMarkerWidth(newWidth);
-			this.anchorPoint.x = pageX;
-		}
+		const newWidth = this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x;
+		this.helpers.setMarkerWidth(newWidth);
+		this.anchorPoint.x = pageX;
 	}
 	w(e) {
 		console.log('west');
