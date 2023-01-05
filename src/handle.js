@@ -1,31 +1,30 @@
+import { isValidUnit } from './utils/utils.js';
 export default class Handle {
-	constructor({ direction, offset, offsetX, offsetY, shape, width = '5px', height = '5px', styles, helpers }) {
+	constructor({ direction, width = '5px', height = '5px', offset = '0px', styles, helpers }) {
+		this.directions = {
+			se: this.se,
+			nw: this.nw,
+			sw: this.sw,
+			ne: this.ne,
+			n: this.n,
+			s: this.s,
+			e: this.e,
+			w: this.w,
+		};
 		this.helpers = helpers;
 		this.direction = direction;
-		this.styles = styles;
-		this.offset = offset;
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
-		this.shape = shape;
-		if (this.shape == 'circle') {
-			this.width = this.height = width;
-		} else {
-			this.width = width;
-			this.height = height;
-		}
-		this.handle = this.makeHandle(this.direction);
-		this.handle.addEventListener('mousedown', this.mouseDown.bind(this));
+		this.element = this.makeHandle({ direction, height, offset, width, styles });
+		this.start();
+	}
+	start() {
+		this.element.addEventListener('mousedown', this.mouseDown.bind(this));
 	}
 	hide() {
-		this.handle.style.display = 'none';
+		this.getHandleElement().style.display = 'none';
 	}
 	show() {
-		this.handle.style.display = 'block';
+		this.getHandleElement().style.display = 'block';
 	}
-	getHandleElement() {
-		return this.handle;
-	}
-
 	mouseDown(e) {
 		e.stopPropagation();
 		this.anchorPoint = {
@@ -33,7 +32,7 @@ export default class Handle {
 			y: e.pageY,
 		};
 		this.engageController = new AbortController();
-		document.addEventListener('mousemove', this.mouseMove().bind(this), {
+		document.addEventListener('mousemove', this.directions[this.direction].bind(this), {
 			signal: this.engageController.signal,
 		});
 		document.addEventListener('mouseup', this.mouseUp.bind(this), { signal: this.engageController.signal });
@@ -146,86 +145,76 @@ export default class Handle {
 		console.log(containerX - pageX);
 		this.helpers.setMarkerX(pageX - containerX);
 	}
-	mouseMove() {
-		switch (this.direction) {
-			case 'se':
-				return this.se;
-			case 'nw':
-				return this.nw;
-			case 'sw':
-				return this.sw;
-			case 'ne':
-				return this.ne;
-			case 'n':
-				return this.n;
-			case 's':
-				return this.s;
-			case 'e':
-				return this.e;
-			case 'w':
-				return this.w;
-		}
+	mouseMove() {}
+	getHandleElement() {
+		return this.element;
 	}
-	makeHandle(direction) {
+	makeHandle({ direction, height, offset, width, styles }) {
+		const getPosition = (direction) => {
+			const getOffset = () => {
+				return isValidUnit(offset) ? offset : `${offset}px`;
+			};
+			const positions = {
+				nw: {
+					left: getOffset(),
+					top: getOffset(),
+					cursor: 'nw-resize',
+				},
+				se: {
+					bottom: getOffset(),
+					right: getOffset(),
+					cursor: 'se-resize',
+				},
+				ne: {
+					right: getOffset(),
+					top: getOffset(),
+					cursor: 'ne-resize',
+				},
+				sw: {
+					left: getOffset(),
+					bottom: getOffset(),
+					cursor: 'sw-resize',
+				},
+				n: {
+					top: getOffset(),
+					left: '50%',
+					transform: 'translateX(-50%)',
+					cursor: 'n-resize',
+				},
+				s: {
+					bottom: getOffset(),
+					left: '50%',
+					transform: `translateX(-50%)`,
+					cursor: 's-resize',
+				},
+				e: {
+					right: getOffset(),
+					top: '50%',
+					transform: 'translateY(-50%)',
+					cursor: 'e-resize',
+				},
+				w: {
+					left: getOffset(),
+					transform: 'translateY(-50%)',
+					top: '50%',
+					cursor: 'w-resize',
+				},
+			};
+			return positions[direction];
+		};
 		const handle = document.createElement('div');
 		handle.draggable = false;
-		handle.style.height = this.height;
-		handle.style.width = this.width;
-		handle.style.position = 'absolute';
-		handle.style.boxSizing = 'border-box';
-		Object.assign(handle.style, this.styles);
-		if (this.shape == 'circle') {
-			handle.style.borderRadius = '50%';
-		}
-		const getOffsetX = () => {
-			if (this.offsetX.includes('%')) {
-				return `${(parseInt(this.offsetX) / 100) * this.helpers.getMarkerWidth()}px`;
-			} else if (this.offsetX) {
-				return this.offsetXj;
-			} else if (this.offset) {
-				return this.offset;
-			} else {
-				return '0px';
-			}
-		};
-		switch (direction) {
-			case 'nw':
-				handle.style.top = `${this.offset}`;
-				handle.style.left = `${this.offset}`;
-				break;
-			case 'se':
-				handle.style.bottom = `${this.offset}`;
-				handle.style.right = `${this.offset}`;
-				break;
-			case 'ne':
-				handle.style.right = `${this.offset}`;
-				handle.style.top = `${this.offset}`;
-				break;
-			case 'sw':
-				handle.style.left = `${this.offset}`;
-				handle.style.bottom = `${this.offset}`;
-				break;
-			case 'n':
-				handle.style.top = `${this.offset}`;
-				handle.style.left = '50%';
-				handle.style.transform = 'translateX(-50%)';
-				break;
-			case 's':
-				handle.style.bottom = `${this.offsetY}`;
-				handle.style.left = '50%';
-				handle.style.transform = `translateX(-50%) translateX(${getOffsetX()})`;
-				break;
-			case 'e':
-				handle.style.right = `${this.offset}`;
-				handle.style.top = '50%';
-				handle.style.transform = 'translateY(-50%)';
-				break;
-			case 'w':
-				handle.style.left = `${this.offset}`;
-				handle.style.transform = 'translateY(-50%)';
-				handle.style.top = '50%';
-				break;
-		}
+		Object.assign(
+			handle.style,
+			{
+				height,
+				width,
+				position: 'absolute',
+				boxSizing: 'border-box',
+			},
+			getPosition(direction),
+			styles,
+		);
 		return handle;
 	}
 }

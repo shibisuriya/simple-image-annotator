@@ -17,6 +17,11 @@ export const getPosition = (el) => {
 	};
 };
 
+// Check if the supplied string is a valid CSS value or not.
+export const isValidUnit = (value) => {
+	return value.includes('px') || value.includes('%');
+};
+
 export const getDimension = (el) => {
 	const { width, height } = el.getBoundingClientRect();
 	return {

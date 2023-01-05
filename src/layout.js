@@ -87,17 +87,16 @@ export default class Layout {
 		// e.stopPropagation();
 		const { which: button, pageX, pageY } = e;
 		if (button == LEFT_MOUSE) {
-			this.events = {};
 			const layoutPosition = this.getLayoutPosition();
-			const left = pageX - layoutPosition.x; // pageX = clientX + window.scrollX
-			const top = pageY - layoutPosition.y; // pageY = clientY + window.scrollY
+			const x = pageX - layoutPosition.x; // pageX = clientX + window.scrollX
+			const y = pageY - layoutPosition.y; // pageY = clientY + window.scrollY
 			this.currentMarker = this.createMarker({
-				x: left,
-				y: top,
-				...this.markerOptions,
+				x,
+				y,
+				options: this.markerOptions,
 			});
 			this.addMarker(this.currentMarker);
-			this.anchorPoint = { x: left, y: top };
+			this.anchorPoint = { x, y };
 
 			this.disengageController = new AbortController();
 			document.addEventListener('mousemove', this.move.bind(this), {
@@ -106,8 +105,7 @@ export default class Layout {
 			document.addEventListener('mouseup', this.disengage.bind(this), {
 				signal: this.disengageController.signal,
 			});
-			console.log(this.events);
-			this.emitEvent('engaged', { type: 'engaged', left, top });
+			this.emitEvent('engaged', { type: 'engaged', x, y });
 		}
 	}
 	addPreExistingMarkers(...markers) {

@@ -1,56 +1,6 @@
 import { getDimension, getPosition, isEmpty } from './utils/utils.js';
 import Handle from './handle.js';
-const defaultOptions = {
-	handles: [
-		{
-			direction: 'se',
-			offset: '-17px',
-			shape: 'circle',
-			width: '30px',
-			height: '500px',
-			showWhileInserting: false,
-		},
-		{
-			direction: 'ne',
-			offset: '-10px',
-			width: '20px',
-			height: '20px',
-			styles: {
-				backgroundColor: 'red',
-				border: '1px solid blue',
-			},
-		},
-		{ direction: 'sw', offset: '-5px', width: '20px', height: '20px' },
-		{ direction: 'nw', offset: '-5px', width: '20px', height: '20px' },
-		{ direction: 'e', offset: '-5px', width: '20px', height: '20px' },
-		{ direction: 'w', offset: '-5px', width: '20px', height: '20px' },
-		{ direction: 'n', offset: '-5px', width: '20px', height: '20px' },
-		{
-			direction: 's',
-			offsetX: '40%',
-			offsetY: '-30px',
-			offset: '30px',
-			width: '30px',
-			height: '30px',
-			styles: {
-				border: '5px solid white',
-			},
-		},
-	],
-	slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '-60px', offsetY: '5px' },
-	alwaysShowMarkers: true,
-	showMarkersOnHover: false,
-	showMarkersOnClick: false,
-	shape: 'square | circle',
-	minWidth: '100px',
-	minHeight: '100px',
-	maxWidth: '100px',
-	maxHeight: '100px',
-	boundedByLayout: true,
-	styles: {
-		border: '3px dotted yellow',
-	},
-};
+const defaultOptions = {};
 export default class Marker {
 	/**
 	 * Create a drag-select marker.
@@ -58,17 +8,23 @@ export default class Marker {
 	 * @param {*} y Y coordinate of the drag-select marker.
 	 */
 	constructor({ x, y, width = 0, height = 0, options = {} }) {
-		this.handles = [];
 		this.setMarkerOptions(options);
-		this.element = this.createElement({ x, y, width, height, styles: this.options.styles });
-		this.addHandles(this.options.handles);
-		this.addSlot(this.options.slot);
+		this.handles = [];
+		this.element = this.createElement({
+			x,
+			y,
+			width,
+			height,
+			styles: this.options.styles,
+			handles: this.options.handles,
+		});
+		// this.addSlot(this.options.slot);
 		// The marker has been inserted into the layout, now wait for the resize / move commands.
 	}
 	setMarkerOptions(options) {
 		this.options = Object.assign({}, defaultOptions, options);
 	}
-	createElement({ x, y, width, height, styles = {} }) {
+	createElement({ x, y, width, height, styles = {}, handles }) {
 		const element = document.createElement('div');
 		element.draggable = false;
 		Object.assign(
@@ -83,6 +39,7 @@ export default class Marker {
 			},
 			styles,
 		);
+		this.addHandles({ markerElement: element, handles });
 		return element;
 	}
 	addSlot(slot) {
@@ -138,29 +95,29 @@ export default class Marker {
 			handle.hide();
 		});
 	}
-	addHandles(handles) {
-		handles.forEach((options) => {
+	addHandles({ markerElement, handles }) {
+		const { directions, ...options } = handles;
+		directions.forEach((direction) => {
 			const handle = new Handle({
+				direction,
 				...options,
-				...{
-					helpers: {
-						getMarkerHeight: this.getHeight.bind(this),
-						getMarkerWidth: this.getWidth.bind(this),
-						getMarkerPosition: this.getMarkerPosition.bind(this),
-						getMarkerDimension: this.getMarkerDimension.bind(this),
-						setMarkerHeight: this.setHeight.bind(this),
-						setMarkerWidth: this.setWidth.bind(this),
-						setMarkerY: this.setY.bind(this),
-						setMarkerX: this.setX.bind(this),
-						getMarkerY: this.getY.bind(this),
-						getMarkerX: this.getX.bind(this),
-						getLayoutDimension: this.getLayoutDimension.bind(this),
-						getLayoutPosition: this.getLayoutPosition.bind(this),
-					},
+				helpers: {
+					getMarkerHeight: this.getHeight.bind(this),
+					getMarkerWidth: this.getWidth.bind(this),
+					getMarkerPosition: this.getMarkerPosition.bind(this),
+					getMarkerDimension: this.getMarkerDimension.bind(this),
+					setMarkerHeight: this.setHeight.bind(this),
+					setMarkerWidth: this.setWidth.bind(this),
+					setMarkerY: this.setY.bind(this),
+					setMarkerX: this.setX.bind(this),
+					getMarkerY: this.getY.bind(this),
+					getMarkerX: this.getX.bind(this),
+					getLayoutDimension: this.getLayoutDimension.bind(this),
+					getLayoutPosition: this.getLayoutPosition.bind(this),
 				},
 			});
 			this.handles.push(handle);
-			this.getMarkerElement().appendChild(handle.getHandleElement());
+			markerElement.appendChild(handle.getHandleElement());
 		});
 	}
 	getMarkerDimension() {
@@ -203,12 +160,6 @@ export default class Marker {
 	getY() {
 		return this.getMarkerElement().offsetTop;
 	}
-	getDimension() {
-		return {
-			width: this.getWidth(),
-			height: this.getHeight(),
-		};
-	}
 	mouseUp() {
 		this.disengageController.abort();
 	}
@@ -222,37 +173,37 @@ export default class Marker {
 		const left = offsetLeft + pageX - this.anchorPoint.x;
 		const maxLeft = containerWidth - markerWidth;
 		if (left >= 0 && left <= maxLeft) {
-			this.getMarkerElement().style.left = `${left}px`;
+			this.setX(left);
 			this.anchorPoint.x = pageX;
 		} else if (left < 0) {
-			this.getMarkerElement().style.left = `${0}px`;
+			this.setX(0);
 		} else if (left > maxLeft) {
-			this.getMarkerElement().style.left = `${maxLeft}px`;
+			this.setX(maxLeft);
 		}
 
 		// Vertical move
 		const top = offsetTop + pageY - this.anchorPoint.y;
 		const maxTop = containerHeight - markerHeight;
 		if (top >= 0 && top <= maxTop) {
-			this.getMarkerElement().style.top = `${top}px`;
+			this.setY(top);
 			this.anchorPoint.y = pageY;
 		} else if (top < 0) {
-			this.getMarkerElement().style.top = `${0}px`;
+			this.setY(0);
 		} else if (top > maxTop) {
-			this.getMarkerElement().style.top = `${maxTop}px`;
+			this.setY(maxTop);
 		}
 	}
 	inserted() {
 		this.start();
 	}
-	mouseEnter(e) {
-		this.showHandles();
-		console.log(e);
-	}
-	mouseLeave(e) {
-		console.log(e);
-		this.hideHandles();
-	}
+	// mouseEnter(e) {
+	// 	this.showHandles();
+	// 	console.log(e);
+	// }
+	// mouseLeave(e) {
+	// 	console.log(e);
+	// 	this.hideHandles();
+	// }
 	start() {
 		this.engageController = new AbortController();
 		this.getMarkerElement().addEventListener('mousedown', this.mouseDown.bind(this), {
@@ -264,15 +215,15 @@ export default class Marker {
 		// this.marker.addEventListener('mouseleave', this.mouseLeave.bind(this), {
 		// 	signal: this.engageController.signal,
 		// });
-		this.getMarkerElement().addEventListener('click', this.showHideHandles.bind(this));
+		// this.getMarkerElement().addEventListener('click', this.showHideHandles.bind(this));
 	}
-	showHideHandles() {
-		if (this.areHandlesVisible) {
-			this.hideHandles();
-		} else {
-			this.showHandles();
-		}
-	}
+	// showHideHandles() {
+	// 	if (this.areHandlesVisible) {
+	// 		this.hideHandles();
+	// 	} else {
+	// 		this.showHandles();
+	// 	}
+	// }
 	stop() {
 		this.engageController.abort();
 	}
