@@ -18,7 +18,7 @@ export default class Marker {
 			styles: this.options.styles,
 			handles: this.options.handles,
 		});
-		// this.addSlot(this.options.slot);
+		this.addSlot(this.options.slot);
 		// The marker has been inserted into the layout, now wait for the resize / move commands.
 	}
 	setMarkerOptions(options) {
@@ -45,38 +45,66 @@ export default class Marker {
 	addSlot(slot) {
 		const { element, direction, offsetX, offsetY } = slot;
 		element.style.position = 'absolute';
-		const getElementWidth = () => {
-			return -element.offsetWidth + offsetX;
+		const getHorizontalPosition = () => {
+			return `${-element.offsetWidth - parseFloat(offsetX)}px`;
 		};
+		const getVerticalPosition = () => {
+			return `${-element.offsetHeight - parseFloat(offsetY)}px`;
+		};
+		console.log(getVerticalPosition());
 		switch (direction) {
 			case 'e':
-				element.style.right = '0px';
-				element.style.top = '50%';
-				element.style.transform = 'translateY(-50%)';
+				Object.assign(element.style, {
+					right: getHorizontalPosition(),
+					top: '50%',
+					transform: 'translateY(-50%)',
+				});
 				break;
 			case 'w':
-				element.style.right = `${getElementWidth()}`;
-				element.style.top = '50%';
-				element.style.transform = 'translateY(-50%)';
+				Object.assign(element.style, {
+					left: getHorizontalPosition(),
+					top: '50%',
+					transform: 'translateY(-50%)',
+				});
 				break;
 			case 'n':
-				element.style.top = `${offsetX}`;
-				element.style.left = '50%';
-				element.style.transform = 'translateX(-50%)';
+				Object.assign(element.style, {
+					top: getVerticalPosition(),
+					left: '50%',
+					transform: 'translateX(-50%)',
+				});
+
 				break;
 			case 's':
-				element.style.bottom = '-50px';
-				element.style.left = '50%';
-				element.style.transform = 'translateX(-50%)';
+				Object.assign(element.style, {
+					bottom: getVerticalPosition(),
+					left: '50%',
+					transform: 'translateX(-50%)',
+				});
 				break;
-
 			case 'ne':
+				Object.assign(element.style, {
+					right: getHorizontalPosition(),
+					top: getVerticalPosition(),
+				});
 				break;
 			case 'se':
+				Object.assign(element.style, {
+					bottom: getVerticalPosition(),
+					right: getHorizontalPosition(),
+				});
 				break;
 			case 'sw':
+				Object.assign(element.style, {
+					bottom: getVerticalPosition(),
+					left: getHorizontalPosition(),
+				});
 				break;
 			case 'nw':
+				Object.assign(element.style, {
+					left: getHorizontalPosition(),
+					top: getVerticalPosition(),
+				});
 				break;
 		}
 		this.getMarkerElement().appendChild(element);

@@ -113,16 +113,30 @@ export default class Handle {
 	s(e) {
 		console.log('south');
 		const { pageY } = e;
-		const newHeight = this.helpers.getMarkerHeight() + pageY - this.anchorPoint.y;
-		this.helpers.setMarkerHeight(newHeight);
-		this.anchorPoint.y = pageY;
+		const { topEdgeY: markerTopEdgeY } = this.helpers.getMarkerPosition();
+		const { bottomEdgeY: layoutBottomEdgeY } = this.helpers.getLayoutPosition();
+		const newHeight = this.helpers.getMarkerHeight() + pageY - this.anchorPoint.y; // This equation is correct but if the user moves the mouse rapidly, then in an edge case the marker overflows the layout.
+		if (pageY >= layoutBottomEdgeY || newHeight + markerTopEdgeY >= layoutBottomEdgeY) {
+			const maxHeight = layoutBottomEdgeY - markerTopEdgeY; // If height increases above this the marker will overflow the layout from the bottom.
+			this.helpers.setMarkerHeight(maxHeight);
+		} else {
+			this.helpers.setMarkerHeight(newHeight);
+			this.anchorPoint.y = pageY;
+		}
 	}
 	e(e) {
 		console.log('east');
 		const { pageX } = e;
+		const { rightEdgeX: layoutRightEdgeX } = this.helpers.getLayoutPosition();
+		const { leftEdgeX: markerLeftEdgeX } = this.helpers.getMarkerPosition();
 		const newWidth = this.helpers.getMarkerWidth() + pageX - this.anchorPoint.x;
-		this.helpers.setMarkerWidth(newWidth);
-		this.anchorPoint.x = pageX;
+		if (pageX >= layoutRightEdgeX || newWidth + markerLeftEdgeX >= layoutRightEdgeX) {
+			const maxWidth = layoutRightEdgeX - markerLeftEdgeX;
+			this.helpers.setMarkerWidth(maxWidth);
+		} else {
+			this.helpers.setMarkerWidth(newWidth);
+			this.anchorPoint.x = pageX;
+		}
 	}
 	w(e) {
 		console.log('west');
