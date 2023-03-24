@@ -60,7 +60,12 @@ const layout = new Layout({
 				backgroundColor: 'green',
 			},
 		},
-		// slot: { element: document.getElementById('test-input-box'), direction: 's', offsetX: '-160px', offsetY: '115px' },
+		// slot: {
+		// 	element: document.getElementById('test-input-box'),
+		// 	direction: 'ne',
+		// 	offsetX: '10px',
+		// 	offsetY: '10px',
+		// },
 		minWidth: '100px',
 		minHeight: '100px',
 		maxWidth: '500px',

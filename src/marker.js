@@ -18,7 +18,9 @@ export default class Marker {
 			styles: this.options.styles,
 			handles: this.options.handles,
 		});
-		this.addSlot(this.options.slot);
+		if (this.options.slot) {
+			this.addSlot(this.options.slot);
+		}
 		// The marker has been inserted into the layout, now wait for the resize / move commands.
 	}
 	setMarkerOptions(options) {

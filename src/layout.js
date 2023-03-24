@@ -18,6 +18,15 @@ export default class Layout {
 	setLayoutOptions(layoutOptions) {
 		this.layoutOptions = Object.assign({}, defaultLayoutOptions, layoutOptions);
 	}
+	/**
+	 * Initialize a drag-select-marker layout.
+	 *
+	 * @param {Object} settings - Settings that need to be used while initializing a drag-select-marker layout.
+	 * @param {HTMLElement} settings.layout - An HTML element that needs to be converted into a drag-select-marker layout.
+	 * @param {Array} settings.markers - A list of markers that needs to be added to the drag-select-marker layout as soon as it is initialized.
+	 * @param {Object} settings.layoutOptions - The y-coordinate of the point.
+	 * @param {Object} settings.markerOptions - `markerOptions` is an object that contains information (such as borders, shapes, etc.)  that is used to construct a marker when the user adds it to the layout. `setMarkerOptions()` won't affect existing markers but will change the attributes of the markers which will be added to the layout in the future.
+	 */
 	constructor({ layout, markers: preExistingMarkers = [], layoutOptions = {}, markerOptions = {} } = {}) {
 		this.layout = layout;
 		this.markers = [];

@@ -143,12 +143,14 @@ export default class Handle {
 		const { pageX } = e;
 		const newWidth = this.helpers.getMarkerWidth() + this.anchorPoint.x - pageX;
 		this.helpers.setMarkerWidth(newWidth);
-		this.anchorPoint.x = pageX;
 
-		const { x: containerX } = this.helpers.getLayoutPosition();
-		console.log(this.helpers.getLayoutPosition());
-		console.log(containerX - pageX);
-		this.helpers.setMarkerX(pageX - containerX);
+		const { leftEdgeX: layoutLeftEdgeX } = this.helpers.getLayoutPosition();
+		if (pageX <= layoutLeftEdgeX) {
+			const { leftEdgeX: markerLeftEdgeX } = this.helpers.getMarkerPosition();
+			const maxWidth = layoutLeftEdgeX - markerLeftEdgeX;
+		}
+		this.helpers.setMarkerX(pageX - layoutLeftEdgeX);
+		this.anchorPoint.x = pageX;
 	}
 	mouseMove() {}
 	getHandleElement() {
