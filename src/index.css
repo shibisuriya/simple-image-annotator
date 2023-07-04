@@ -1,0 +1,25 @@
+* {
+	outline: 1px dotted black !important;
+}
+
+body {
+	margin: 0px;
+	position: relative;
+}
+.layout {
+	width: 500px;
+	height: 500px;
+	background-color: grey;
+	color: black;
+	margin: 100px;
+}
+.controls {
+	border: 1px solid red;
+	padding: 15px;
+}
+.data {
+	display: block;
+}
+#test-input-box {
+	font-size: 30px;
+}

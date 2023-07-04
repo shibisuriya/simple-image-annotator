@@ -1,20 +1,25 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
+	mode: 'production',
 	entry: {
 		main: path.resolve(__dirname, './src/index.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, './dist'),
-		filename: '[name].bundle.js',
 	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			title: 'Drag select marker',
-			template: path.resolve(__dirname, './src/template.html'), // template file
-			filename: 'index.html', // output file
-		}),
-	],
+	module: {
+		rules: [
+			{
+				test: /\.(?:js|mjs|cjs)$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+				},
+			},
+		],
+	},
+	optimization: {
+		usedExports: false,
+	},
 };
