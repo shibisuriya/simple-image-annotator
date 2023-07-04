@@ -1,4 +1,4 @@
-import Layout from './layout.js';
+import { Layout } from './index.js';
 import './index.css';
 
 const getLayout = () => {
