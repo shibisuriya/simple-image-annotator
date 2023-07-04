@@ -1,3 +1,3 @@
-import layout from './layout.js';
+import Layout from './layout.js';
 
-export { layout };
+export { Layout };
