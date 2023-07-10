@@ -1,5 +1,6 @@
 import { Layout } from './index.js';
 import './index.css';
+import './index.scss';
 
 const getLayout = () => {
 	const [el] = document.getElementsByClassName('layout');

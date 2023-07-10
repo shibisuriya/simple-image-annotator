@@ -28,15 +28,20 @@
 	},
 	"homepage": "https://github.com/shibisuriya/drag-select-marker#readme",
 	"devDependencies": {
+		"@babel/core": "^7.22.6",
 		"@babel/preset-env": "^7.22.6",
 		"babel-loader": "^9.1.2",
 		"css-loader": "^6.8.1",
 		"html-webpack-plugin": "^5.5.3",
+		"postcss-loader": "^7.3.3",
+		"postcss-preset-env": "^9.0.0",
+		"sass": "^1.63.6",
+		"sass-loader": "^13.3.2",
 		"style-loader": "^3.3.3",
 		"webpack": "^5.88.1",
 		"webpack-cli": "^5.1.4",
 		"webpack-dev-server": "^4.15.1",
-		"@babel/core": "^7.22.6"
+		"terser-webpack-plugin": "^5.3.9"
 	},
 	"files": [
 		"./dist"
