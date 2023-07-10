@@ -50,7 +50,7 @@ const layout = new Layout({
 	markerOptions: {
 		handles: {
 			directions: ['e', 'w', 's', 'n', 'sw', 'nw', 'ne', 'se'],
-			offset: '-60px',
+			offset: '-15px',
 			height: '30px',
 			width: '30px',
 			// Make this default options for better UX.
