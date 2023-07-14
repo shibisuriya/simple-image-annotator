@@ -7,7 +7,9 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "webpack-dev-server --config ./webpack.config.dev.js",
 		"build": "webpack --config ./webpack.config.js",
-		"build:prod": "webpack --config webpack.config.dev.js --mode production "
+		"build:prod": "webpack --config webpack.config.dev.js --mode production",
+		"pack-unpack": "yarn pack --filename package.tgz && tar -xvf package.tgz",
+		"cleanup-pack": "rm -rf package package.tgz"
 	},
 	"repository": {
 		"type": "git",
