@@ -1,8 +1,8 @@
 {
-	"name": "drag-select-marker",
+	"name": "simple-image-annotator",
 	"version": "1.0.0",
 	"description": "Mark areas on HTML elements using drag select.",
-	"main": "./src/index.js",
+	"main": "./dist/main.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "webpack-dev-server --config ./webpack.config.dev.js",
@@ -11,23 +11,27 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/shibisuriya/drag-select-marker.git"
+		"url": "git+https://github.com/shibisuriya/simple-image-annotator.git"
 	},
 	"keywords": [
-		"drag-select",
-		"marker",
-		"mark",
+		"image-annotator",
+		"bouding-box",
+		"annotations",
 		"areas",
 		"facebook-tag",
 		"google-docs-comments",
-		"vercel-preview"
+		"vercel-preview",
+		"simple-image-annotator",
+		"0-dependencies",
+		"light-weight",
+		"simple"
 	],
 	"author": "Shibi Suriya P",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/shibisuriya/drag-select-marker/issues"
+		"url": "https://github.com/shibisuriya/simple-image-annotator/issues"
 	},
-	"homepage": "https://github.com/shibisuriya/drag-select-marker#readme",
+	"homepage": "https://github.com/shibisuriya/simple-image-annotator#readme",
 	"devDependencies": {
 		"@babel/core": "^7.22.6",
 		"@babel/preset-env": "^7.22.6",
