@@ -25,6 +25,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git checkout --orphan gh-pages
-          git --work-tree ./packages/docs/dist add --all
+          git --work-tree ./packages/docs/.vitepress/dist add --all
           git --work-tree dist commit -m "Deploy"
           git push origin HEAD:gh-pages --force
