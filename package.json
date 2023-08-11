@@ -5,6 +5,7 @@
   "repository": "https://github.com/shibisuriya/simple-image-annotator.git",
   "author": "Shibi Suriya <shibi@kissflow.com>",
   "license": "MIT",
+    "private": true,
   "scripts": {
     "dev:core": "lerna run dev --scope=@simple-image-annotator/core",
     "build:core": "lerna run build --scope=@simple-image-annotator/core",

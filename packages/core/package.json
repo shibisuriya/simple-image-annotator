@@ -1,5 +1,5 @@
 {
-	"name": "simple-image-annotator",
+	"name": "@simple-image-annotator/core",
 	"version": "1.0.0",
 	"description": "Mark areas on HTML elements using drag select.",
 	"main": "./dist/main.js",

@@ -1,1 +1,8 @@
-node_modules/
+node_modules
+dist
+.vscode
+package  
+*.tgz
+
+# vitepress cache
+packages/docs/.vitepress/cache
