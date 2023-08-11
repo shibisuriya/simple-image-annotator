@@ -20,8 +20,8 @@ jobs:
 
             - name: Build and deploy
               run: |
+                  cd ./packages/docs
                   yarn install
-                  cd packages/docs
                   yarn run build
                   git config --local user.email "action@github.com"
                   git config --local user.name "GitHub Action"

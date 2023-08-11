@@ -12,7 +12,8 @@
     "dev:docs": "lerna run dev --scope=@simple-image-annotator/docs",
     "build:docs": "lerna run build --scope=@simple-image-annotator/docs",
     "dev:react": "lerna run dev --scope=@simple-image-annotator/react",
-    "build:react": "lerna run build --scope=@simple-image-annotator/react"
+    "build:react": "lerna run build --scope=@simple-image-annotator/react",
+    "cleanup": "node ./scripts/cleanup.js"
   },
     "workspaces": [
     "packages/*"
