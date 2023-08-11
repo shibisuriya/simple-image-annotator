@@ -20,12 +20,11 @@ jobs:
 
             - name: Build and deploy
               run: |
-                  cd ./packages/docs
                   yarn install
-                  yarn run build
+                  yarn run build:docs
                   git config --local user.email "action@github.com"
                   git config --local user.name "GitHub Action"
                   git checkout --orphan gh-pages
-                  git --work-tree ./.vitepress/dist add --all
+                  git --work-tree ./packages/docs/.vitepress/dist add --all
                   git --work-tree dist commit -m "Deploy"
                   git push origin HEAD:gh-pages --force
