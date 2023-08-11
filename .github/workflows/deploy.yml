@@ -23,8 +23,6 @@ jobs:
       - name: Install dependencies and build
         run: |
           yarn install
-          yarn run build:gridstack
-          yarn run build:react
           yarn run build:docs
 
       - name: Deploy to gh-pages
